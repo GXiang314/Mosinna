@@ -1,5 +1,6 @@
 import axios from "axios";
 import AIRepository from "../repository/AIRepository";
+import { ServiceStatusEnum } from "./ServiceStatusEnum";
 
 export class AIService {
   aiRepository;
@@ -15,12 +16,12 @@ export class AIService {
       axios
         .get(service.host + `/api/health`)
         .then(() => {
-          if (service.status === "可用") return;
-          this.aiRepository.changeStatus(service.name, "可用");
+          if (service.status === ServiceStatusEnum.可用) return;
+          this.aiRepository.changeStatus(service.name, ServiceStatusEnum.可用);
         })
         .catch(() => {
-          if (service.status === "不可用") return;
-          this.aiRepository.changeStatus(service.name, "不可用");
+          if (service.status === ServiceStatusEnum.不可用) return;
+          this.aiRepository.changeStatus(service.name, ServiceStatusEnum.不可用);
         });
     }
   }

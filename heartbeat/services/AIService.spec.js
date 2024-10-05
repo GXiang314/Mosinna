@@ -2,18 +2,19 @@ import { expect, jest } from "@jest/globals";
 import axios from "axios";
 import { AIService } from "./AIService.js";
 import MockAdapter from 'axios-mock-adapter';
+import { ServiceStatusEnum } from "./ServiceStatusEnum.js";
 
 class FakeRepository {
   services = [
     {
       name: "AI 音訊檢測服務",
       host: "http://192.168.1.123",
-      status: "不可用",
+      status: ServiceStatusEnum.不可用
     },
     {
       name: "文字詐騙檢測服務",
       host: "http://192.168.1.124",
-      status: "不可用",
+      status: ServiceStatusEnum.不可用,
     },
   ];
 
@@ -64,7 +65,7 @@ describe("心跳檢測", () => {
 
     // then
     const afterService = repository.getServices();
-    expect(afterService[0].status).toBe("可用");
-    expect(afterService[1].status).toBe("不可用");
+    expect(afterService[0].status).toBe(ServiceStatusEnum.可用);
+    expect(afterService[1].status).toBe(ServiceStatusEnum.不可用);
   });
 });
