@@ -4,7 +4,7 @@
     <div class="content-wrapper">
       <div class="content-box">
         <h2>上傳影片</h2>
-        <div class="upload-area" @click="triggerFileUpload">
+        <div  class="upload-area" @click="triggerFileUpload">
           <div v-if="uploadedFile" class="upload-video">
             <p>
               檔案名稱:
@@ -21,7 +21,7 @@
               height="auto"
             ></video> -->
           </div>
-          <label for="file-upload" class="upload-label">
+          <label v-if="!uploadedFile" for="file-upload" class="upload-label">
             點擊這裡或拖曳檔案上傳
           </label>
           <input
@@ -111,6 +111,12 @@ h2 {
 }
 .upload-video {
   color: #f1ecff;
+}
+.upload-video a{
+  color: #acd0ff;
+}
+.upload-video a:hover {
+  color: #fffeec;
 }
 .upload-label {
   display: block;
