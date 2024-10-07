@@ -1,16 +1,14 @@
 <template>
   <div class="background-container">
     <nav class="navbar">
-    <div class="logo">魔聲仔</div>
-    <ul class="nav-links">
-      <li><router-link to="/">上傳影片</router-link></li>
-      <li><router-link to="/UserReport">結果分析</router-link></li>
-      <li><router-link to="/UserHistory">歷史紀錄</router-link></li>
-    </ul>
-    <div class="menu-icon" @click="toggleMenu">
-      <i class="fas fa-bars"></i>
-    </div>
-  </nav>
+      <div class="logo">魔聲仔</div>
+      <ul class="nav-links">
+        <li><router-link to="/">上傳影片</router-link></li>
+        <li><router-link to="/UserReport">結果分析</router-link></li>
+        <li><router-link to="/UserHistory">歷史紀錄</router-link></li>
+      </ul>
+        <button class="menu">&#9776;</button>
+    </nav>
     <router-view />
   </div>
 </template>
@@ -18,7 +16,7 @@
 <script></script>
 
 <style>
-*{
+* {
   margin: 0;
   padding: 0;
 }
@@ -64,14 +62,12 @@ body {
 
 .nav-links a:hover,
 .nav-links a.router-link-active {
-  color: #FFEBB7;
-  border-bottom: 2px solid #FFEBB7;
+  color: #ffebb7;
+  border-bottom: 2px solid #ffebb7;
+} 
+.menu {
+  display:none;
 }
-
-.menu-icon {
-  display: none;
-}
-
 @media (max-width: 768px) {
   .nav-links {
     display: none;
@@ -88,8 +84,14 @@ body {
     display: flex;
   }
 
-  .menu-icon {
-    display: block;
+  .menu {
+    display:block;
+    background-color: transparent;
+    color:white;
+    font-size: 30px;
+    position:absolute;
+    right:20px;
+    border:none;
     cursor: pointer;
   }
 }
