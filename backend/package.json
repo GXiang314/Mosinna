@@ -8,7 +8,7 @@
     "start": "node src/index.js",
     "dev": "nodemon --experimental-modules --es-module-specifier-resolution=node src/index.js",
     "lint": "eslint --fix src",
-    "test": "jest"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "keywords": [],
   "author": "CJ R. <cj@null.computer> (https://w3cj.now.sh)",
