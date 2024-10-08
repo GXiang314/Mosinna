@@ -7,7 +7,7 @@
         <li><router-link to="/UserReport">結果分析</router-link></li>
         <li><router-link to="/UserHistory">歷史紀錄</router-link></li>
       </ul>
-        <button class="menu">&#9776;</button>
+      <button class="menu">&#9776;</button>
     </nav>
     <router-view />
   </div>
@@ -16,12 +16,18 @@
 <script></script>
 
 <style>
+@font-face {
+  font-family: "ttt";
+  src: url(../src/assets/font-size/AnyConv.com__jf-openhuninn-2.1.woff)
+    format("woff");
+}
 * {
   margin: 0;
   padding: 0;
+  font-family: "ttt";
 }
 body {
-  background-image: url("./assets/starry\ sky.jpg");
+  background-image: url("./assets/image/starry\ sky.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -64,9 +70,9 @@ body {
 .nav-links a.router-link-active {
   color: #ffebb7;
   border-bottom: 2px solid #ffebb7;
-} 
+}
 .menu {
-  display:none;
+  display: none;
 }
 @media (max-width: 768px) {
   .nav-links {
@@ -85,13 +91,13 @@ body {
   }
 
   .menu {
-    display:block;
+    display: block;
     background-color: transparent;
-    color:white;
+    color: white;
     font-size: 30px;
-    position:absolute;
-    right:20px;
-    border:none;
+    position: absolute;
+    right: 20px;
+    border: none;
     cursor: pointer;
   }
 }

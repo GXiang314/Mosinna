@@ -4,7 +4,7 @@
     <div class="content-wrapper">
       <div class="content-box">
         <h2>上傳影片</h2>
-        <div  class="upload-area" @click="triggerFileUpload">
+        <div class="upload-area" @click="triggerFileUpload">
           <div v-if="uploadedFile" class="upload-video">
             <p>
               檔案名稱:
@@ -71,7 +71,7 @@ export default {
 .image-container {
   width: 100%;
   height: 50%;
-  background-image: url("/src/assets/vision.png");
+  background-image: url("/src/assets/image/vision.png");
   background-size: cover;
   background-position: center;
 }
@@ -112,7 +112,7 @@ h2 {
 .upload-video {
   color: #f1ecff;
 }
-.upload-video a{
+.upload-video a {
   color: #acd0ff;
 }
 .upload-video a:hover {

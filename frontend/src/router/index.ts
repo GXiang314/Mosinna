@@ -1,9 +1,9 @@
-import { createWebHistory, createRouter } from "vue-router";
-import Home from "@/views/UserUpdate.vue";
+import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import Home from "@/views/UserUpload.vue";
 import Report from "@/views/UserReport.vue";
 import History from "@/views/UserHistory.vue";
 
-const routes = [
+const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     name: "上傳影片",
@@ -22,7 +22,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(process.env.BASE_URL),
   routes,
 });
 

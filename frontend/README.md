@@ -1,4 +1,4 @@
-# mosinna
+# frontend3
 
 ## Project setup
 ```
