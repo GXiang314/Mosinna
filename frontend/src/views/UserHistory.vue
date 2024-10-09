@@ -1,23 +1,10 @@
 <template>
-  <div class="container">
+  <div class="container-history">
     <div class="content-box-history">
       <div class="title-section">
         <p>歷史紀錄</p>
       </div>
       <hr class="divider" />
-      <div class="grid-container">
-        <div v-for="(item, index) in items" :key="index" class="grid-item">
-          <div class="rectangle-container">
-            <div class="rect-bottom"></div>
-            <div class="rect-top">
-              <div class="date-time">{{ item.date }}</div>
-              <button class="image-button" @click="showPopup(item)">
-                <img src="/search.png" class="image" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
       <div class="grid-container">
         <div v-for="(item, index) in items" :key="index" class="grid-item">
           <div class="rectangle-container">
@@ -63,6 +50,7 @@ export default {
         { date: "2024-10-08 10:00" },
         { date: "2024-10-07 14:30" },
         { date: "2024-10-06 09:15" },
+        { date: "2024-10-06 09:15" },
       ],
       showModal: false,
       currentItem: null,
@@ -81,20 +69,25 @@ export default {
 </script>
 
 <style>
-.container {
+.container-history {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 90vh;
 }
 
 .content-box-history {
   background-color: #6b5276;
   width: 80%;
-  height: 85%;
   max-width: 900px;
+  height: 80%;
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-bottom: 100px;
 }
 
 .title-section {
@@ -128,7 +121,8 @@ export default {
 
 .rectangle-container {
   position: relative;
-  height: 150px;
+  padding-bottom: 100px;
+  height: 80px;
 }
 
 .rect-bottom {
@@ -199,12 +193,13 @@ export default {
 }
 .pages {
   color: #ffebb7;
-  height: 10%;
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
-  bottom: 0;
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
 }
 
 .pages a {
@@ -219,6 +214,7 @@ export default {
   align-items: center;
   transition: all 0.3s;
 }
+
 .pages b {
   color: #ffebb7;
   width: 38px;
@@ -229,5 +225,37 @@ export default {
 .pages a:hover {
   color: #fff;
   background-color: #cbb8ff;
+}
+
+@media (max-width: 768px) {
+  .grid-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .rect-bottom,
+  .rect-top {
+    width: 140px;
+    height: 160px;
+  }
+
+  .image {
+    width: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-container {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .rect-bottom,
+  .rect-top {
+    width: 120px;
+    height: 140px;
+  }
+
+  .image {
+    width: 50px;
+  }
 }
 </style>

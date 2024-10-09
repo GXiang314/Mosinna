@@ -13,7 +13,16 @@
   </div>
 </template>
 
-<script></script>
+<script>
+// function showSidebar() {
+//   const sidebar = document.querySelector(".sidebar");
+//   sidebar.style.display = "flex";
+// }
+// function hideSidebar() {
+//   const sidebar = document.querySelector(".sidebar");
+//   sidebar.style.display = "none";
+// }
+</script>
 
 <style>
 @font-face {
@@ -52,7 +61,7 @@ body {
 .nav-links {
   list-style: none;
   display: flex;
-  gap: 1rem;
+  gap: 2rem;
 }
 
 .nav-links li {

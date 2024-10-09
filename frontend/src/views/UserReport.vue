@@ -12,17 +12,9 @@
           </div>
         </div>
         <div class="grid-container-report">
-          <div class="grid-row">
-            <div class="grid-title">內容檢測</div>
-            <div class="grid-title">深偽音訊</div>
-            <div class="grid-title">換臉檢測</div>
-            <div class="grid-title">臉部特徵檢測</div>
-          </div>
-          <div class="grid-row">
-            <div class="grid-items">1</div>
-            <div class="grid-items">2</div>
-            <div class="grid-items">3</div>
-            <div class="grid-items">4</div>
+          <div v-for="(item, index) in gridItems" :key="index" class="grid-row">
+            <div class="grid-title">{{ item.title }}</div>
+            <div class="grid-items">{{ item.value }}</div>
           </div>
         </div>
       </div>
@@ -30,11 +22,56 @@
   </div>
 </template>
 
+<script>
+import Chart from "chart.js/auto";
+
+export default {
+  data() {
+    return {
+      gridItems: [
+        { title: "內容檢測", value: "Hazardous" },
+        { title: "深偽音訊", value: "Hazardous" },
+        { title: "換臉檢測", value: "safe" },
+        { title: "臉部特徵檢測", value: "Hazardous" },
+      ],
+    };
+  },
+  mounted() {
+    this.renderChart();
+  },
+  methods: {
+    renderChart() {
+      const ctx = document.getElementById("myChart").getContext("2d");
+      new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels: ["safe", "Hazardous"],
+          datasets: [
+            {
+              label: "deepfake",
+              data: [3, 1],
+              backgroundColor: ["#7FD27D", "#C8698A"],
+              borderColor: "rgba(75, 192, 192, 1)",
+              borderWidth: 0.2,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+        },
+      });
+    },
+  },
+};
+</script>
+
 <style>
 .container-report {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 20px;
   height: 90vh;
 }
 
@@ -43,7 +80,6 @@
   border-radius: 10px;
   width: 80%;
   max-width: 900px;
-  border-radius: 10px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 }
 
@@ -68,50 +104,42 @@
   align-items: center;
 }
 
-.image-wrapper-report {
+.chart-container {
+  position: relative;
   width: 100%;
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.result-image {
-  max-width: 100%;
-  height: auto;
-  border-radius: 5px;
+  height: 200px;
 }
 
 .grid-container-report {
   display: flex;
   flex-direction: column;
+  align-items: center;
   width: 100%;
 }
 
 .grid-row {
   display: flex;
-  justify-content: space-around;
-}
-.grid-title {
-  background-color: #6b5276;
-  color: #dad8eb;
-  padding: 20px;
+  justify-content: space-between;
   margin: 10px;
-  flex: 1;
-  text-align: center;
-  border-radius: 5px;
+  max-width: 400px;
 }
+
+.grid-title,
 .grid-items {
-  background-color: #eee;
-  padding: 20px;
-  margin: 10px;
   flex: 1;
+  padding: 10px;
+  width: 200px;
   text-align: center;
   border-radius: 5px;
 }
 
-.vertical-divider {
-  width: 100%;
-  border: none;
-  border-top: 2px solid #ddd;
-  margin: 20px 0;
+.grid-title {
+  background-color: #6b5276;
+  color: #dad8eb;
+  margin-right: 10px;
+}
+
+.grid-items {
+  background-color: #eee;
 }
 </style>

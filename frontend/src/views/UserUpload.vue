@@ -68,12 +68,19 @@ export default {
 .all-content {
   height: 90vh;
 }
+img {
+  width: auto;
+  max-height: 100%;
+}
 .image-container {
-  width: 100%;
-  height: 50%;
+  height: 400px;
   background-image: url("/src/assets/image/vision.png");
-  background-size: cover;
+  background-size: contain;
+  background-repeat: no-repeat;
   background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .content-wrapper {
@@ -89,7 +96,7 @@ export default {
   border: #f1ecff 1px solid;
   border-bottom: none;
   width: 100%;
-  padding: 20px;
+  padding: 30px;
   border-radius: 20px 20px 0 0;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
 }
@@ -103,7 +110,7 @@ h2 {
 
 .upload-area {
   border: 2px dashed #f1ecff;
-  padding: 30px;
+  padding: 70px;
   text-align: center;
   border-radius: 10px;
   background-color: transparent;
@@ -141,5 +148,17 @@ h2 {
 
 .upload-button:hover {
   background-color: #ac355f;
+}
+
+@media (max-width: 768px) {
+  .image-container {
+    height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .image-container {
+    height: 200px;
+  }
 }
 </style>
