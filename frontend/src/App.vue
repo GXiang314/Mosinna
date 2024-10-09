@@ -27,8 +27,7 @@
 <style>
 @font-face {
   font-family: "ttt";
-  src: url(../src/assets/font-size/AnyConv.com__jf-openhuninn-2.1.woff)
-    format("woff");
+  src: url(../src/assets/font-size/JasonHandwriting4.woff) format("woff");
 }
 * {
   margin: 0;
