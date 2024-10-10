@@ -9,5 +9,4 @@ app.listen(port, async () => {
     console.log(errors);
   });
   await db.sequelize.sync();
-  /* eslint-enable no-console */
 });

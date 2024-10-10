@@ -1,13 +1,19 @@
 import { Model, DataTypes } from "sequelize";
 
-export default (sequelize) => {
-  class Video extends Model {
+export class Video extends Model {
     // 這裡可以定義關聯
     static associate(models) {
       // 定義此 model 與其他 models 的關聯
       // 例如：this.belongsTo(models.User)
+      this.hasMany(models.CheckResult, {
+        foreignKey: 'video_id',
+        as: 'checkResult'
+      })
     }
-  }
+}
+
+export default (sequelize) => {
+  
 
   Video.init(
     {

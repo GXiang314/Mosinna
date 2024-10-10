@@ -1,4 +1,5 @@
 import { Model, DataTypes } from "sequelize";
+
 export class CheckResult extends Model {
     // 這裡可以定義關聯
     static associate(models) {

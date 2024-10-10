@@ -1,14 +1,17 @@
 import { Model, DataTypes } from "sequelize";
 
-export default (sequelize) => {
-  class Service extends Model {
-    // 這裡可以定義關聯
-    static associate(models) {
-      // 定義此 model 與其他 models 的關聯
-      // 例如：this.belongsTo(models.User)
-    }
+export class Service extends Model {
+  // 這裡可以定義關聯
+  static associate(models) {
+    // 定義此 model 與其他 models 的關聯
+    // 例如：this.belongsTo(models.User)
+    this.hasMany(models.CheckResult, {
+      foreignKey: 'service_id'
+    })
   }
+}
 
+export default (sequelize) => {
   Service.init(
     {
       id: {
@@ -37,11 +40,11 @@ export default (sequelize) => {
       // 防止表名自動轉為複數
       freezeTableName: true,
       // 明確指定表名（選擇性的，但建議加上）
-      tableName: 'service',
+      tableName: "service",
       // 其他選項
       timestamps: true,
-      createdAt: 'created_at',
-      updatedAt: 'updated_at',
+      createdAt: "created_at",
+      updatedAt: "updated_at",
       underscored: true, // 預設為 false
       // paranoid: false, // 預設為 false
     }

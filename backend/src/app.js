@@ -5,6 +5,7 @@ import cors from 'cors'
 import 'dotenv/config'
 import  middlewares from './middlewares.js'
 import  api from './api/index.js'
+import db from './db/index.js'
 
 const app = express();
 

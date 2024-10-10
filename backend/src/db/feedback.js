@@ -1,14 +1,14 @@
 import { Model, DataTypes } from "sequelize";
 
-export default (sequelize) => {
-  class Feedback extends Model {
-    // 這裡可以定義關聯
-    static associate(models) {
-      // 定義此 model 與其他 models 的關聯
-      // 例如：this.belongsTo(models.User)
-    }
+class Feedback extends Model {
+  // 這裡可以定義關聯
+  static associate(models) {
+    // 定義此 model 與其他 models 的關聯
+    // 例如：this.belongsTo(models.User)
   }
+}
 
+export default (sequelize) => {
   Feedback.init(
     {
       id: {
