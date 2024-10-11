@@ -1,29 +1,38 @@
-const express = require('express');
-const morgan = require('morgan');
-const helmet = require('helmet');
-const cors = require('cors');
+import express from 'express'
+import morgan from 'morgan'
+import helmet from 'helmet'
+import cors from 'cors'
+import 'dotenv/config'
+import middlewares from './middlewares'
+import api from './api'
+import { sequelize } from './db'
 
-require('dotenv').config();
+const app = express()
 
-const middlewares = require('./middlewares');
-const api = require('./api');
-
-const app = express();
-
-app.use(morgan('dev'));
-app.use(helmet());
-app.use(cors());
-app.use(express.json());
+app.use(morgan('dev'))
+app.use(helmet())
+app.use(cors())
+app.use(express.json())
 
 app.get('/', (req, res) => {
-  res.json({
-    message: '🦄🌈✨👋🌎🌍🌏✨🌈🦄',
-  });
-});
+    res.json({
+        message: '🦄🌈✨👋🌎🌍🌏✨🌈🦄',
+    })
+})
 
-app.use('/api/v1', api);
+app.use('/api', api)
 
-app.use(middlewares.notFound);
-app.use(middlewares.errorHandler);
+app.use(middlewares.notFound)
+app.use(middlewares.errorHandler)
+;async () => {
+    await sequelize
+        .validate()
+        .then(() => {
+            console.log('Database connected')
+        })
+        .catch((error) => {
+            console.error('Unable to connect to the database:', error)
+        })
+}
 
-module.exports = app;
+export default app
