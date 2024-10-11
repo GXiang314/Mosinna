@@ -1,10 +1,10 @@
 import express from 'express'
-import serviceController from '../controller/service.controller';
+import serviceController from '../controller/service.controller'
 
-const router = express.Router();
+const router = express.Router()
 
-router.post('', serviceController.registerService);
+router.post('', serviceController.registerService)
 
-router.get('', serviceController.getServices);
+router.get('', serviceController.getServices)
 
-export default router;
+export default router
