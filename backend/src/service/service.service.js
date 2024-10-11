@@ -3,8 +3,8 @@ import serviceRepository from '../repository/service.repository'
 export class ServiceService {
     /**
      * @typedef {Object} RegisterServiceInput
-     * @property {string} host - host of the service.
-     * @property {string} name - name of the service.
+     * @property {string} host
+     * @property {string} name
      *
      * @param {RegisterServiceInput} payload
      */

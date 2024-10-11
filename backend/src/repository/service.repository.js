@@ -4,8 +4,8 @@ import { ServiceStatusEnum } from '../enum/service-status.enum'
 export class ServiceRepository {
     /**
      * @typedef {Object} RegisterServiceInput
-     * @property {string} host - host of the service.
-     * @property {string} name - name of the service.
+     * @property {string} host
+     * @property {string} name
      *
      * @param {RegisterServiceInput} payload
      */
