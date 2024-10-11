@@ -4,7 +4,7 @@ import helmet from 'helmet'
 import cors from 'cors'
 import 'dotenv/config'
 import middlewares from './middlewares'
-import api from './api/index'
+import api from './api'
 
 const app = express();
 
@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
   });
 });
 
-app.use('/api/v1', api);
+app.use('/api', api);
 
 app.use(middlewares.notFound);
 app.use(middlewares.errorHandler);
