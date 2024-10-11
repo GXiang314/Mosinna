@@ -1,6 +1,6 @@
 import axios from "axios";
-import AIRepository from "../repository/AIRepository.js";
-import { ServiceStatusEnum } from "./ServiceStatusEnum.js";
+import AIRepository from "../repository/AIRepository";
+import { ServiceStatusEnum } from "./ServiceStatusEnum";
 
 export class AIService {
   aiRepository;

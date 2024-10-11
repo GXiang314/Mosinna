@@ -1,8 +1,8 @@
 import { expect, jest } from "@jest/globals";
 import axios from "axios";
-import { AIService } from "./AIService.js";
+import { AIService } from "./AIService";
 import MockAdapter from 'axios-mock-adapter';
-import { ServiceStatusEnum } from "./ServiceStatusEnum.js";
+import { ServiceStatusEnum } from "./ServiceStatusEnum";
 
 class FakeRepository {
   services = [
@@ -57,8 +57,8 @@ describe("心跳檢測", () => {
     const aiService = new AIService(repository);
     const mockAxios = new MockAdapter(axios);
     const services = repository.getServices()
-    mockAxios.onGet(`${services[0].host}/api/health`).reply(200)
-    mockAxios.onGet(`${services[1].host}/api/health`).reply(404)
+    mockAxios.onGet(`${services[0].host}/api/healthy`).reply(200)
+    mockAxios.onGet(`${services[1].host}/api/healthy`).reply(404)
 
     // when
     await aiService.heartbeat();

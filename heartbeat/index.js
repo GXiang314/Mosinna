@@ -1,5 +1,5 @@
-import AIService from "./services/AIService.js"
-import AIRepository from "./repository/AIRepository.js"
+import AIService from "./services/AIService"
+import AIRepository from "./repository/AIRepository"
 
 const repository = new AIRepository();
 const aiService = new AIService(repository);
