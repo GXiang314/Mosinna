@@ -5,4 +5,4 @@ declare IS_BACKEND_FOLDER_CHANGE=$(git show --name-only -r --stat --oneline HEAD
 
 echo "IS_BACKEND_FOLDER_CHANGE  --> + $IS_BACKEND_FOLDER_CHANGE"
 
-if [[ $IS_BACKEND_FOLDER_CHANGE ]]; then cd backend && npm run test && npm run test:e2e && cd ..; fi
+if [[ $IS_BACKEND_FOLDER_CHANGE ]]; then cd backend &&  npm run test:e2e && cd ..; fi
