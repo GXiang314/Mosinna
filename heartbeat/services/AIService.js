@@ -1,8 +1,10 @@
 import axios from "axios";
-import AIRepository from "../repository/AIRepository";
 import { ServiceStatusEnum } from "./ServiceStatusEnum";
 
 export class AIService {
+  /**
+   * @type {import ('../repository/AIRepository').default"}
+   */
   aiRepository;
   HeartbeatId;
 
@@ -25,15 +27,12 @@ export class AIService {
         .then(() => {
           console.log(`ping ${service.name} successfully!`);
           if (service.status === ServiceStatusEnum.可用) return;
-          this.aiRepository.changeStatus(service.name, ServiceStatusEnum.可用);
+          this.aiRepository.changeStatus(service.id, ServiceStatusEnum.可用);
         })
         .catch(() => {
           console.log(`ping ${service.name} error!`);
           if (service.status === ServiceStatusEnum.不可用) return;
-          this.aiRepository.changeStatus(
-            service.name,
-            ServiceStatusEnum.不可用
-          );
+          this.aiRepository.changeStatus(service.id, ServiceStatusEnum.不可用);
         });
     }
   }
@@ -45,5 +44,3 @@ export class AIService {
     }, Number(milliseconds));
   }
 }
-
-export default AIService;

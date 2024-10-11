@@ -1,17 +1,19 @@
 import { expect, jest } from "@jest/globals";
 import axios from "axios";
 import { AIService } from "./AIService";
-import MockAdapter from 'axios-mock-adapter';
+import MockAdapter from "axios-mock-adapter";
 import { ServiceStatusEnum } from "./ServiceStatusEnum";
 
 class FakeRepository {
   services = [
     {
+      id: 1,
       name: "AI 音訊檢測服務",
       host: "http://192.168.1.123",
-      status: ServiceStatusEnum.不可用
+      status: ServiceStatusEnum.不可用,
     },
     {
+      id: 2,
       name: "文字詐騙檢測服務",
       host: "http://192.168.1.124",
       status: ServiceStatusEnum.不可用,
@@ -22,9 +24,9 @@ class FakeRepository {
     return this.services;
   }
 
-  changeStatus(name, status) {
+  changeStatus(id, status) {
     const service = this.services.find((s) => {
-      return s.name === name;
+      return s.id === id;
     });
     service.status = status;
   }
@@ -56,9 +58,9 @@ describe("心跳檢測", () => {
     const repository = new FakeRepository();
     const aiService = new AIService(repository);
     const mockAxios = new MockAdapter(axios);
-    const services = repository.getServices()
-    mockAxios.onGet(`${services[0].host}/api/healthy`).reply(200)
-    mockAxios.onGet(`${services[1].host}/api/healthy`).reply(404)
+    const services = repository.getServices();
+    mockAxios.onGet(`${services[0].host}/api/healthy`).reply(200);
+    mockAxios.onGet(`${services[1].host}/api/healthy`).reply(404);
 
     // when
     await aiService.heartbeat();

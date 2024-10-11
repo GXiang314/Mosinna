@@ -1,24 +1,25 @@
-import { ServiceStatusEnum } from "../services/ServiceStatusEnum";
+import { Service } from "../db/service";
 
-class AIRepository {
-    
-  services = [
-    {
-      name: "文字詐騙檢測服務",
-      host: "http://127.0.0.1:3000",
-      status: ServiceStatusEnum.不可用,
-    },
-  ];
-
-  getServices() {
-    return this.services;
+export class AIRepository {
+  async getServices() {
+    return await Service.findAll();
   }
 
-  changeStatus(name, status) {
-    const service = this.services.find((s) => {
-      return s.name === name;
-    });
-    service.status = status;
+  async changeStatus(id, status) {
+    // const service= db.Service.find(()=>{
+    //   return service.name===name;
+    // })
+    // return service.status===status;
+    await Service.update(
+      {
+        status: status,
+      },
+      {
+        where: {
+          id: id,
+        },
+      }
+    );
   }
 }
-export default AIRepository;
+export default new AIRepository();
