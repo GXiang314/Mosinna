@@ -1,4 +1,4 @@
-import { ServiceStatusEnum } from "../services/ServiceStatusEnum.js";
+import { ServiceStatusEnum } from "../services/ServiceStatusEnum";
 
 class AIRepository {
     
