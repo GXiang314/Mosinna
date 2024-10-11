@@ -40,12 +40,45 @@
           <textarea required></textarea>
         </div>
       </div>
-    </div>
-    <div>
-      <button type="submit">提交</button>
+      <div>
+        <button type="submit">送出</button>
+        <button @click="showPopup(item)">分享</button>
+      </div>
     </div>
   </form>
+  <div v-if="showModal" class="modal-overlay">
+    <div class="modal-content-back">
+      <h3>{{ currentItem?.date }}</h3>
+      <p>建立貼文</p>
+      <div class="share-msg">
+        <p>註解說明</p>
+        <p>#標籤</p>
+      </div>
+      <p>分享至：</p>
+      <button @click="closePopup">關閉</button>
+      <button>分享</button>
+    </div>
+  </div>
 </template>
+<script>
+export default {
+  data() {
+    return {
+      showModal: false,
+      currentItem: null,
+    };
+  },
+  methods: {
+    showPopup(item) {
+      this.currentItem = item;
+      this.showModal = true;
+    },
+    closePopup() {
+      this.showModal = false;
+    },
+  },
+};
+</script>
 <style>
 .container-notification {
   display: flex;
@@ -111,5 +144,26 @@ textarea {
   height: 150px;
   width: 95%;
   padding: 5px;
+}
+button {
+  background-color: #c8698a;
+  color: #fff;
+  font-size: 15px;
+  padding: 5px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.share-msg {
+  border-top: 1px solid #6b5276;
+  border-bottom: 1px solid #6b5276;
+}
+.modal-content-back {
+  width: 60%;
+  height: 80%;
+  background-color: hsla(256, 100%, 96%, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  z-index: 99;
 }
 </style>

@@ -33,6 +33,7 @@
   margin: 0;
   padding: 0;
   font-family: "ttt";
+  letter-spacing: 3px;
 }
 body {
   background-image: url("./assets/image/starry\ sky.jpg");
