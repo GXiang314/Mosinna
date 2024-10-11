@@ -1,5 +1,5 @@
-import app from "./app.js";
-import db from "./db/index.js";
+import app from "./app";
+import db from "./db";
 
 const port = process.env.PORT || 5000;
 app.listen(port, async () => {
@@ -8,5 +8,4 @@ app.listen(port, async () => {
   await db.sequelize.authenticate().then(function (errors) {
     console.log(errors);
   });
-  await db.sequelize.sync();
 });

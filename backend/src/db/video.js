@@ -13,7 +13,6 @@ export class Video extends Model {
 }
 
 export default (sequelize) => {
-  
 
   Video.init(
     {

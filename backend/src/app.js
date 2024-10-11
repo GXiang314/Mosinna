@@ -3,9 +3,8 @@ import morgan from 'morgan'
 import helmet from 'helmet'
 import cors from 'cors'
 import 'dotenv/config'
-import  middlewares from './middlewares.js'
-import  api from './api/index.js'
-import db from './db/index.js'
+import middlewares from './middlewares'
+import api from './api/index'
 
 const app = express();
 
