@@ -27,15 +27,11 @@
       </div>
       <table class="pages" id="page-member">
         <td><a>&lt;&lt;</a></td>
-        <td><a>&lt;</a></td>
-        <td><a>1</a></td>
         <td><a>2</a></td>
         <td><a>3</a></td>
         <td><b>4</b></td>
         <td><a>5</a></td>
         <td><a>6</a></td>
-        <td><a>7</a></td>
-        <td><a>&gt;</a></td>
         <td><a>&gt;&gt;</a></td>
       </table>
     </div>
@@ -49,6 +45,8 @@ export default {
       items: [
         { date: "2024-10-08 10:00" },
         { date: "2024-10-07 14:30" },
+        { date: "2024-10-06 09:15" },
+        { date: "2024-10-06 09:15" },
         { date: "2024-10-06 09:15" },
         { date: "2024-10-06 09:15" },
       ],
@@ -78,7 +76,7 @@ export default {
 
 .content-box-history {
   background-color: #6b5276;
-  width: 80%;
+  width: 90%;
   max-width: 900px;
   height: 80%;
   border-radius: 10px;
@@ -86,7 +84,6 @@ export default {
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   padding-bottom: 100px;
 }
 
@@ -98,16 +95,19 @@ export default {
   border: none;
   border-top: 2px solid #ddd;
 }
+
 .grid-item {
   position: relative;
   background-color: transparent;
-  padding: 20px;
+  padding: 10px;
   border-radius: 10px;
 }
+
 .grid-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
+  margin-left: 10px;
   margin-bottom: 40px;
 }
 
@@ -121,7 +121,7 @@ export default {
 
 .rectangle-container {
   position: relative;
-  padding-bottom: 100px;
+  padding-bottom: 130px;
   height: 80px;
 }
 
@@ -130,17 +130,17 @@ export default {
   top: 0;
   left: 0;
   width: 180px;
-  height: 200px;
+  height: 220px;
   background-color: #f1ecff;
   z-index: 1;
 }
 
 .rect-top {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 15px;
+  left: 15px;
   width: 180px;
-  height: 200px;
+  height: 225px;
   background-color: #fff;
   z-index: 2;
 }
@@ -191,6 +191,7 @@ export default {
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
   z-index: 99;
 }
+
 .pages {
   color: #ffebb7;
   display: flex;
@@ -227,33 +228,71 @@ export default {
   background-color: #cbb8ff;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .grid-container {
     grid-template-columns: repeat(2, 1fr);
   }
 
   .rect-bottom,
   .rect-top {
-    width: 140px;
-    height: 160px;
+    width: 180px;
+    height: 225px;
+  }
+  .rectangle-container {
+    padding-bottom: 145px;
+  }
+  .image {
+    width: 70px;
+  }
+}
+
+@media (max-width: 768px) {
+  .grid-container {
+    grid-template-columns: repeat(3, 1fr);
   }
 
+  .rect-bottom,
+  .rect-top {
+    width: 160px;
+    height: 200px;
+  }
+
+  .rect-top {
+    top: 10px;
+    left: 10px;
+  }
+  .rectangle-container {
+    padding-bottom: 120px;
+  }
   .image {
     width: 60px;
   }
 }
 
 @media (max-width: 480px) {
+  .grid-item {
+    padding: 10;
+  }
+
   .grid-container {
-    grid-template-columns: repeat(1, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+    margin-left: 0;
   }
 
   .rect-bottom,
   .rect-top {
-    width: 120px;
-    height: 140px;
+    margin-left: 0;
+    width: 132px;
+    height: 165px;
   }
 
+  .rect-top {
+    top: 5px;
+    left: 5px;
+  }
+  .rectangle-container {
+    padding-bottom: 90px;
+  }
   .image {
     width: 50px;
   }

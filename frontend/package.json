@@ -1,5 +1,5 @@
 {
-  "name": "frontend3",
+  "name": "frontend",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -12,7 +12,8 @@
     "core-js": "^3.8.3",
     "gsap": "^3.12.5",
     "vue": "^3.2.13",
-    "vue-router": "^4.0.3"
+    "vue-router": "^4.0.3",
+    "vue3-menus": "^1.1.2"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.4.0",

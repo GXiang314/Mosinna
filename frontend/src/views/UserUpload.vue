@@ -12,14 +12,6 @@
                 uploadedFile.name
               }}</a>
             </p>
-
-            <!-- 檢視影片<video
-              v-if="isVideoFile"
-              :src="uploadedFileUrl"
-              controls
-              width="100%"
-              height="auto"
-            ></video> -->
           </div>
           <label v-if="!uploadedFile" for="file-upload" class="upload-label">
             點擊這裡或拖曳檔案上傳
@@ -159,6 +151,10 @@ h2 {
 @media (max-width: 480px) {
   .image-container {
     height: 200px;
+  }
+  .upload-area {
+    padding-top: 210px;
+    padding-bottom: 210px;
   }
 }
 </style>

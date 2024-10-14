@@ -24,36 +24,6 @@
 
 <script>
 import Chart from "chart.js/auto";
-// import { ref, onMounted } from "vue";
-
-// const count = ref(0);
-
-// function increment() {
-//   count.value++;
-// }
-
-// renderChart(() => {
-//   const ctx = document.getElementById("myChart").getContext("2d");
-//   new Chart(ctx, {
-//     type: "doughnut",
-//     data: {
-//       labels: ["safe", "Hazardous"],
-//       datasets: [
-//         {
-//           label: "deepfake",
-//           data: [3, 1],
-//           backgroundColor: ["#7FD27D", "#C8698A"],
-//           borderColor: "rgba(75, 192, 192, 1)",
-//           borderWidth: 0.2,
-//         },
-//       ],
-//     },
-//     options: {
-//       responsive: true,
-//       maintainAspectRatio: false,
-//     },
-//   });
-// });
 
 export default {
   data() {
@@ -170,5 +140,11 @@ export default {
 
 .grid-items {
   background-color: #eee;
+}
+@media (max-width: 480px) {
+  .grid-title,
+  .grid-items {
+    width: 100px;
+  }
 }
 </style>

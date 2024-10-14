@@ -1,30 +1,77 @@
 <template>
   <div class="background-container">
     <nav class="navbar">
-      <div class="logo">魔聲仔</div>
+      <div class="logo"><img src="/vision.png" /></div>
       <ul class="nav-links">
         <li><router-link to="/">上傳影片</router-link></li>
         <li><router-link to="/UserReport">結果分析</router-link></li>
         <li><router-link to="/UserHistory">歷史紀錄</router-link></li>
       </ul>
-      <button class="menu">&#9776;</button>
+      <button @click="toggleSidebar" class="menu">&#9776;</button>
+      <ul class="sidebar" v-if="isSidebarVisible">
+        <li @click="toggleSidebar">
+          <div class="close">&#x58;</div>
+        </li>
+        <li><router-link to="/">上傳影片</router-link></li>
+        <li><router-link to="/UserReport">結果分析</router-link></li>
+        <li><router-link to="/UserHistory">歷史紀錄</router-link></li>
+      </ul>
     </nav>
     <router-view />
   </div>
 </template>
 
 <script>
-// function showSidebar() {
-//   const sidebar = document.querySelector(".sidebar");
-//   sidebar.style.display = "flex";
-// }
-// function hideSidebar() {
-//   const sidebar = document.querySelector(".sidebar");
-//   sidebar.style.display = "none";
-// }
+export default {
+  data() {
+    return {
+      isSidebarVisible: false,
+    };
+  },
+  methods: {
+    toggleSidebar() {
+      this.isSidebarVisible = !this.isSidebarVisible;
+    },
+  },
+};
 </script>
 
 <style>
+.logo img {
+  width: 120px;
+}
+.close {
+  border: none;
+  font-size: 30px;
+  cursor: pointer;
+  display: flex;
+  justify-content: end;
+  margin-right: 30px;
+}
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  right: 0;
+  top: 0;
+  list-style-type: none;
+  background-color: hsla(282, 18%, 39%, 0.9);
+  width: 150px;
+  height: 100%;
+  padding: 10px;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.sidebar li {
+  width: 100%;
+  padding: 10px;
+}
+
+.sidebar a {
+  width: 100%;
+  text-decoration: none;
+  color: white;
+}
 @font-face {
   font-family: "ttt";
   src: url(../src/assets/font-size/JasonHandwriting4.woff) format("woff");
@@ -37,6 +84,7 @@
 }
 body {
   background-image: url("./assets/image/starry\ sky.jpg");
+  background-color: #3a2795;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -54,10 +102,9 @@ body {
 }
 
 .logo {
-  font-size: 1.5rem;
-  font-weight: bold;
+  display: flex;
+  justify-content: center;
 }
-
 .nav-links {
   list-style: none;
   display: flex;
