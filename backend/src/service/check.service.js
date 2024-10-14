@@ -9,13 +9,6 @@ export class CheckService {
         this.serviceRepository = serviceRepository
     }
 
-    async uploadVideo(videoData) {
-        await uploadRepository.uploadVideo(videoData)
-    }
-    async callAvailableApi() {
-        await uploadRepository.callAvailableApi()
-    }
-
     async proxyToCheckService(input) {
         const { videoData } = input
         // 找出所有可用的 Services

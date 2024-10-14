@@ -24,21 +24,21 @@ class FakeServiceRepository {
 
 describe(`Unit test for CheckService`, () => {
     it(`
-        proxyToCheckService
+        轉至檢測服務
 
         given
-            { videoData }
+            上傳一個影片{ videoData }
         when
-            find All Avaliable Detection Services from repository
-            call check apis to get result.
+            從服務註冊表找所有可檢測的服務
+            呼叫可用的服務檢測並得到檢測結果
         then
-            map all result on service
+            匯出所有檢測結果，包括
             [
                 {
-                    id
-                    name
-                    result
-                    details?
+                    服務id
+                    服務名稱
+                    檢測結果
+                    詳細描述
                 },...
             ]
     `, async () => {
