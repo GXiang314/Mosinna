@@ -7,7 +7,12 @@ export class ServiceController {
      * @param {import("express").Response} res
      */
     async registerService(req, res) {
-        res.json(apiFormatter(await serviceService.registerService(req.body)))
+        if (!req?.body?.name || !req?.body?.host) {
+            return res.status(400).json(apiFormatter(null, 400, '資料給我輸好'))
+        }
+        return res.json(
+            apiFormatter(await serviceService.registerService(req.body)),
+        )
     }
 
     /**
@@ -15,7 +20,7 @@ export class ServiceController {
      * @param {import("express").Response} res
      */
     async getServices(req, res) {
-        res.json(apiFormatter(await serviceService.getServices()))
+        return res.json(apiFormatter(await serviceService.getServices()))
     }
 }
 
