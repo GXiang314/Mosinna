@@ -67,7 +67,7 @@ describe(`驗收測試 - 影片檢測API`, () => {
             },
         })
         const result = await request(app)
-            .post('/api/upload')
+            .post('/api/check')
             .send({
                 videoData: videoData,
             })
