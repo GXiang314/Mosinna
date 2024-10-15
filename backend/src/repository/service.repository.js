@@ -20,6 +20,12 @@ export class ServiceRepository {
     async getServices() {
         return await Service.findAll()
     }
+
+    async getAllAvaliableServices() {
+        return await Service.findAll({
+            where: { status: ServiceStatusEnum.可用 },
+        })
+    }
 }
 
 export default new ServiceRepository()
