@@ -23,23 +23,53 @@
             @change="handleFileChange"
             accept="video/*"
           />
-          <button class="upload-button">選擇檔案</button>
+          <button class="upload-button">確認上傳</button>
         </div>
       </div>
     </div>
   </div>
 </template>
-
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 
 const uploadedFile = ref(null);
 const uploadedFileUrl = ref("");
 const isVideoFile = ref(false);
+const videoData = ref("");
+const router = useRouter();
+
+const triggerFileUpload = () => {
+  document.getElementById("file-upload").click();
+};
+
+const handleFileChange = (event) => {
+  const files = event.target.files;
+  if (files.length > 0) {
+    const file = files[0];
+    uploadedFile.value = file;
+
+    isVideoFile.value = file.type.startsWith("video");
+
+    if (isVideoFile.value) {
+      const reader = new FileReader();
+
+      reader.onload = async (e) => {
+        uploadedFileUrl.value = e.target.result;
+        videoData.value = uploadedFileUrl.value;
+
+        console.log("Base64 影片資料:", videoData.value);
+        await postData();
+      };
+
+      reader.readAsDataURL(file);
+    }
+  }
+};
 const postData = async () => {
   const url = "http://localhost:5000/api/check";
   const data = {
-    videoData: uploadedFileUrl.value,
+    videoData: videoData.value,
   };
 
   try {
@@ -52,39 +82,24 @@ const postData = async () => {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP 錯誤！狀態：${response.status}`);
     }
 
     const jsonData = await response.json();
-    console.log(jsonData);
+    console.log("伺服器回應:", jsonData);
+
+    localStorage.setItem("apiResponseData", JSON.stringify(jsonData.data));
+
+    const storedData = localStorage.getItem("apiResponseData");
+    console.log("儲存在 localStorage 的資料:", JSON.parse(storedData));
+
+    alert("檢測完畢！前往結果頁面。");
+
+    router.push({ path: "/UserReport" });
   } catch (error) {
-    console.error("Fetch error: ", error);
+    console.error("Fetch 錯誤: ", error);
   }
 };
-onMounted(() => {
-  postData();
-});
-
-const triggerFileUpload = () => {
-  document.getElementById("file-upload").click();
-};
-
-const handleFileChange = (event) => {
-  const files = event.target.files;
-  if (files.length > 0) {
-    const file = files[0];
-    uploadedFile.value = file;
-    isVideoFile.value = file.type.startsWith("video");
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      uploadedFileUrl.value = e.target.result;
-      console.log(uploadedFileUrl.value);
-    };
-    reader.readAsDataURL(file);
-  }
-};
-console.log(uploadedFileUrl.value);
 </script>
 
 <style>
