@@ -12,9 +12,21 @@
           </div>
         </div>
         <div class="grid-container-report">
-          <div v-for="(item, index) in gridItems" :key="index" class="grid-row">
-            <div class="grid-title">{{ item.title }}</div>
-            <div class="grid-items">{{ item.value }}</div>
+          <div
+            v-for="(gridItem, gridIndex) in gridItems"
+            :key="gridIndex"
+            class="grid-row"
+          >
+            <div class="grid-title">{{ gridItem.title }}</div>
+            <div
+              :style="{
+                backgroundColor:
+                  gridItem.value === 'Hazardous' ? '#C8698A' : '#7FD27D',
+              }"
+              class="grid-items"
+            >
+              {{ gridItem.value }}
+            </div>
           </div>
         </div>
       </div>
@@ -22,48 +34,43 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from "vue";
 import Chart from "chart.js/auto";
 
-export default {
-  data() {
-    return {
-      gridItems: [
-        { title: "內容檢測", value: "Hazardous" },
-        { title: "深偽音訊", value: "Hazardous" },
-        { title: "換臉檢測", value: "safe" },
-        { title: "臉部特徵檢測", value: "Hazardous" },
+const gridItems = ref([
+  { title: "內容檢測", value: "Hazardous" },
+  { title: "深偽音訊", value: "Hazardous" },
+  { title: "換臉檢測", value: "safe" },
+  { title: "臉部特徵檢測", value: "Hazardous" },
+]);
+
+const renderChart = () => {
+  const ctx = document.getElementById("myChart").getContext("2d");
+  new Chart(ctx, {
+    type: "doughnut",
+    data: {
+      labels: ["safe", "Hazardous"],
+      datasets: [
+        {
+          label: "deepfake",
+          data: [3, 1],
+          backgroundColor: ["#7FD27D", "#C8698A"],
+          borderColor: "rgba(75, 192, 192, 1)",
+          borderWidth: 0.2,
+        },
       ],
-    };
-  },
-  mounted() {
-    this.renderChart();
-  },
-  methods: {
-    renderChart() {
-      const ctx = document.getElementById("myChart").getContext("2d");
-      new Chart(ctx, {
-        type: "doughnut",
-        data: {
-          labels: ["safe", "Hazardous"],
-          datasets: [
-            {
-              label: "deepfake",
-              data: [3, 1],
-              backgroundColor: ["#7FD27D", "#C8698A"],
-              borderColor: "rgba(75, 192, 192, 1)",
-              borderWidth: 0.2,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-        },
-      });
     },
-  },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+    },
+  });
 };
+
+onMounted(() => {
+  renderChart();
+});
 </script>
 
 <style>

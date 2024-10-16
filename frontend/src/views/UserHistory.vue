@@ -30,17 +30,52 @@
           <div class="content-section-report">
             <div class="image-wrapper-report">
               <div class="chart-container">
-                <canvas id="myChart"></canvas>
+                <canvas id="myChartHistory"></canvas>
               </div>
             </div>
             <div class="grid-container-report">
               <div
-                v-for="(item, index) in gridItems"
-                :key="index"
+                v-for="(gridItem, gridIndex) in gridItems"
+                :key="gridIndex"
                 class="grid-row"
               >
-                <div class="grid-title">{{ item.title }}</div>
-                <div class="grid-items">{{ item.value }}</div>
+                <div class="grid-title">{{ gridItem.title }}</div>
+                <div
+                  :style="{
+                    backgroundColor:
+                      gridItem.value === 'Hazardous' ? '#C8698A' : '#7FD27D',
+                  }"
+                  class="grid-items"
+                >
+                  {{ gridItem.value }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-btn">
+            <button @click="showPopupshare(itemshare)">分享</button>
+          </div>
+          <div v-if="showModalshare" class="modal-overlay">
+            <div class="modal-content-back">
+              <h3>{{ currentItemshare?.date }}</h3>
+              <div class="post-close" @click="closePopupshare">&#x58;</div>
+              <p class="share-title">建立貼文</p>
+              <div class="share-msg">
+                <textarea class="share-content" type="content">
+註解說明</textarea
+                >
+                <input class="share-tag" type="tag" value="#魔聲仔" />
+              </div>
+              <div class="post-end">
+                <div class="share-text">
+                  <p class="share-to">分享至：</p>
+                  <a href="https://www.instagram.com/" target="_blank">
+                    <img src="/social.png" alt="Facebook" />
+                  </a>
+                  <a href="https://www.facebook.com/" target="_blank">
+                    <img src="/facebook.png" alt="Facebook" />
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -59,64 +94,85 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from "vue";
 import Chart from "chart.js/auto";
-export default {
-  data() {
-    return {
-      items: [
-        { date: "2024-10-08 10:00" },
-        { date: "2024-10-07 14:30" },
-        { date: "2024-10-06 09:15" },
-        { date: "2024-10-06 09:15" },
-        { date: "2024-10-06 09:15" },
-        { date: "2024-10-06 09:15" },
-      ],
-      gridItems: [
-        { title: "內容檢測", value: "Hazardous" },
-        { title: "深偽音訊", value: "Hazardous" },
-        { title: "換臉檢測", value: "safe" },
-        { title: "臉部特徵檢測", value: "Hazardous" },
-      ],
-      showModal: false,
-      currentItem: null,
-    };
-  },
-  methods: {
-    showPopup(item) {
-      this.currentItem = item;
-      this.showModal = true;
-    },
-    closePopup() {
-      this.showModal = false;
-    },
-    renderChart1() {
-      const ctx = document.getElementById("myChart").getContext("2d");
-      new Chart(ctx, {
-        type: "doughnut",
-        data: {
-          labels: ["safe", "Hazardous"],
-          datasets: [
-            {
-              label: "deepfake",
-              data: [3, 1],
-              backgroundColor: ["#7FD27D", "#C8698A"],
-              borderColor: "rgba(75, 192, 192, 1)",
-              borderWidth: 0.2,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-        },
-      });
-    },
-  },
+
+const items = ref([
+  { date: "2024-10-08 10:00" },
+  { date: "2024-10-07 14:30" },
+  { date: "2024-10-06 09:15" },
+  { date: "2024-10-06 09:15" },
+  { date: "2024-10-06 09:15" },
+  { date: "2024-10-06 09:15" },
+]);
+
+const gridItems = ref([
+  { title: "內容檢測", value: "Hazardous" },
+  { title: "深偽音訊", value: "Hazardous" },
+  { title: "換臉檢測", value: "safe" },
+  { title: "臉部特徵檢測", value: "Hazardous" },
+]);
+
+const showModal = ref(false);
+const currentItem = ref(null);
+const showModalshare = ref(false);
+
+const showPopup = (item) => {
+  currentItem.value = item;
+  showModal.value = true;
+  setTimeout(() => {
+    renderChart1();
+  }, 300);
 };
+
+const closePopup = () => {
+  showModal.value = false;
+};
+
+const showPopupshare = () => {
+  showModalshare.value = true;
+};
+
+const closePopupshare = () => {
+  showModalshare.value = false;
+};
+
+const renderChart1 = () => {
+  const ctxh = document.getElementById("myChartHistory")?.getContext("2d");
+  if (ctxh) {
+    new Chart(ctxh, {
+      type: "doughnut",
+      data: {
+        labels: ["safe", "Hazardous"],
+        datasets: [
+          {
+            label: "deepfake",
+            data: [3, 1],
+            backgroundColor: ["#7FD27D", "#C8698A"],
+            borderColor: "rgba(75, 192, 192, 1)",
+            borderWidth: 0.2,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+      },
+    });
+  }
+};
+
+onMounted(() => {
+  renderChart1();
+});
 </script>
 
 <style>
+#myChartHistory {
+  width: 100%;
+  height: 400px;
+}
 .container-history {
   display: flex;
   justify-content: center;
@@ -160,7 +216,9 @@ export default {
   margin-left: 10px;
   margin-bottom: 40px;
 }
-
+.form-btn {
+  text-align: center;
+}
 .date-time {
   position: absolute;
   top: 10px;

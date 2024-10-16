@@ -42,52 +42,10 @@
       </div>
       <div class="form-btn">
         <button type="submit">送出</button>
-        <button @click="showPopup(item)">分享</button>
       </div>
     </div>
   </form>
-  <div v-if="showModal" class="modal-overlay">
-    <div class="modal-content-back">
-      <h3>{{ currentItem?.date }}</h3>
-      <div class="post-close" @click="closePopup">&#x58;</div>
-      <p class="share-title">建立貼文</p>
-      <div class="share-msg">
-        <textarea class="share-content" type="content">註解說明</textarea>
-        <input class="share-tag" type="tag" value="#魔聲仔" />
-      </div>
-      <div class="post-end">
-        <div class="share-text">
-          <p class="share-to">分享至：</p>
-          <a href="https://www.instagram.com/" target="_blank">
-            <img src="/social.png" alt="Facebook" />
-          </a>
-          <a href="https://www.facebook.com/" target="_blank">
-            <img src="/facebook.png" alt="Facebook" />
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
 </template>
-<script>
-export default {
-  data() {
-    return {
-      showModal: false,
-      currentItem: null,
-    };
-  },
-  methods: {
-    showPopup(item) {
-      this.currentItem = item;
-      this.showModal = true;
-    },
-    closePopup() {
-      this.showModal = false;
-    },
-  },
-};
-</script>
 <style>
 .container-notification {
   display: flex;
