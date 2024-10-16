@@ -60,6 +60,7 @@ export default {
   height: 100%;
   padding: 10px;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+  z-index: 999;
 }
 
 .sidebar li {

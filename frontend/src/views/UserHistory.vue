@@ -20,9 +20,30 @@
       </div>
       <div v-if="showModal" class="modal-overlay">
         <div class="modal-content">
+          <div class="post-close" @click="closePopup">&#x58;</div>
           <h3>{{ currentItem?.date }}</h3>
-          <p>這是彈跳視窗的內容。</p>
-          <button @click="closePopup">關閉</button>
+          <div class="content-box-report"></div>
+          <div class="title-section">
+            <p>歷史分析</p>
+          </div>
+          <hr class="divider" />
+          <div class="content-section-report">
+            <div class="image-wrapper-report">
+              <div class="chart-container">
+                <canvas id="myChart"></canvas>
+              </div>
+            </div>
+            <div class="grid-container-report">
+              <div
+                v-for="(item, index) in gridItems"
+                :key="index"
+                class="grid-row"
+              >
+                <div class="grid-title">{{ item.title }}</div>
+                <div class="grid-items">{{ item.value }}</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <table class="pages" id="page-member">
@@ -39,6 +60,7 @@
 </template>
 
 <script>
+import Chart from "chart.js/auto";
 export default {
   data() {
     return {
@@ -49,6 +71,12 @@ export default {
         { date: "2024-10-06 09:15" },
         { date: "2024-10-06 09:15" },
         { date: "2024-10-06 09:15" },
+      ],
+      gridItems: [
+        { title: "內容檢測", value: "Hazardous" },
+        { title: "深偽音訊", value: "Hazardous" },
+        { title: "換臉檢測", value: "safe" },
+        { title: "臉部特徵檢測", value: "Hazardous" },
       ],
       showModal: false,
       currentItem: null,
@@ -61,6 +89,28 @@ export default {
     },
     closePopup() {
       this.showModal = false;
+    },
+    renderChart1() {
+      const ctx = document.getElementById("myChart").getContext("2d");
+      new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels: ["safe", "Hazardous"],
+          datasets: [
+            {
+              label: "deepfake",
+              data: [3, 1],
+              backgroundColor: ["#7FD27D", "#C8698A"],
+              borderColor: "rgba(75, 192, 192, 1)",
+              borderWidth: 0.2,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+        },
+      });
     },
   },
 };

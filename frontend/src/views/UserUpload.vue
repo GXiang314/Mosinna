@@ -13,7 +13,7 @@
               }}</a>
             </p>
           </div>
-          <label v-if="!uploadedFile" for="file-upload" class="upload-label">
+          <label v-if="!uploadedFile" class="upload-label">
             點擊這裡或拖曳檔案上傳
           </label>
           <input
@@ -30,30 +30,61 @@
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      uploadedFile: null,
-      uploadedFileUrl: "",
-      isVideoFile: false,
-    };
-  },
-  methods: {
-    triggerFileUpload() {
-      document.getElementById("file-upload").click();
-    },
-    handleFileChange(event) {
-      const files = event.target.files;
-      if (files.length > 0) {
-        const file = files[0];
-        this.uploadedFile = file;
-        this.uploadedFileUrl = URL.createObjectURL(file);
-        this.isVideoFile = file.type.startsWith("video");
-      }
-    },
-  },
+<script setup>
+import { ref, onMounted } from "vue";
+
+const uploadedFile = ref(null);
+const uploadedFileUrl = ref("");
+const isVideoFile = ref(false);
+const postData = async () => {
+  const url = "http://localhost:5000/api/check";
+  const data = {
+    videoData: uploadedFileUrl.value,
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const jsonData = await response.json();
+    console.log(jsonData);
+  } catch (error) {
+    console.error("Fetch error: ", error);
+  }
 };
+onMounted(() => {
+  postData();
+});
+
+const triggerFileUpload = () => {
+  document.getElementById("file-upload").click();
+};
+
+const handleFileChange = (event) => {
+  const files = event.target.files;
+  if (files.length > 0) {
+    const file = files[0];
+    uploadedFile.value = file;
+    isVideoFile.value = file.type.startsWith("video");
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      uploadedFileUrl.value = e.target.result;
+      console.log(uploadedFileUrl.value);
+    };
+    reader.readAsDataURL(file);
+  }
+};
+console.log(uploadedFileUrl.value);
 </script>
 
 <style>
