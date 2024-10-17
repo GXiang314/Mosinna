@@ -9,8 +9,8 @@ services:
     environment:
       - POSTGRESQL_PASSWORD=postgres
       - TZ='GMT+8'
-  #   volumes:
-  #     - postgre-data:/bitnami/postgresql
+    volumes:
+      - postgre-data:/bitnami/postgresql
   # postgresql_test:
   #   image: 'bitnami/postgresql:latest'
   #   ports: 
