@@ -258,6 +258,12 @@ onMounted(() => {
   padding-bottom: 100px;
 }
 
+.content-section-report {
+  height: 400px;
+  display: flex;
+  flex-direction: row;
+}
+
 .title-section {
   text-align: center;
 }

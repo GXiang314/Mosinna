@@ -117,7 +117,7 @@ onMounted(() => {
   padding: 15px;
   text-align: left;
   color: #f1ecff;
-  font-size: 20px;
+  font-size: 25px;
   border-radius: 10px 10px 0 0;
   background-color: #6b5276;
 }
@@ -128,6 +128,7 @@ onMounted(() => {
 }
 
 .content-section-report {
+  font-size: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
