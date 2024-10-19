@@ -24,10 +24,42 @@
           <fieldset>
             <legend>是否已受騙</legend>
             <div>
-              <input type="radio" />
-              <label for="contactChoice1">是</label>
-              <input type="radio" />
-              <label for="contactChoice2">否</label>
+              <input type="radio" id="yes" name="scammed" value="yes" />
+              <label for="yes">是</label>
+              <input type="radio" id="no" name="scammed" value="no" />
+              <label for="no">否</label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>詐騙管道</legend>
+            <div class="fraud-container">
+              <div
+                v-for="source in fraudSources"
+                :key="source.id"
+                class="fraud-item"
+              >
+                <input
+                  type="radio"
+                  :id="source.id"
+                  name="fraudSource"
+                  :value="source.content"
+                />
+                <label :for="source.id">{{ source.content }}</label>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>詐騙手法</legend>
+            <div class="fraud-container">
+              <div
+                v-for="source in fraudTypes"
+                :key="source.id"
+                class="fraud-item"
+              >
+                <input type="radio" id="no" name="fraudSource" value="no" />
+                <label>{{ source.content }}</label>
+              </div>
             </div>
           </fieldset>
         </div>
@@ -46,50 +78,102 @@
     </div>
   </form>
 </template>
-<!-- <script>
-import { ref } from "vue";
-const postData = async () => {
-  const url = "http://localhost:5000/api/check";
-  const data = {
-    videoData: videoData.value,
-  };
+
+<script setup>
+import { ref, onMounted } from "vue";
+
+const fraudSources = ref([]);
+const fraudTypes = ref([]);
+const errorMessage = ref("");
+
+const getFraudSources = async () => {
+  const url = "http://localhost:5000/api/list/fraudSources";
 
   try {
     const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
+      method: "GET",
     });
-
+    const result = await response.json();
     if (!response.ok) {
       throw new Error(`HTTP 錯誤！狀態：${response.status}`);
     }
+    console.log(result.data);
+    const { status, data, message } = result;
 
-    const jsonData = await response.json();
-    console.log("伺服器回應:", jsonData);
-
-    localStorage.setItem("apiResponseData", JSON.stringify(jsonData.data));
-
-    const storedData = localStorage.getItem("apiResponseData");
-    console.log("儲存在 localStorage 的資料:", JSON.parse(storedData));
-
-    alert("檢測完畢！前往結果頁面。");
-
-    router.push({ path: "/UserReport" });
+    if (status === 200) {
+      fraudSources.value = data;
+      console.log("詐騙來源:", fraudSources.value);
+    } else {
+      console.error("API錯誤:", message);
+      errorMessage.value = message;
+    }
   } catch (error) {
     console.error("Fetch 錯誤: ", error);
+    errorMessage.value = "獲取失敗";
   }
 };
-</script> -->
+const getFraudTypes = async () => {
+  const url = "http://localhost:5000/api/list/fraudTypes";
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+    });
+    const fraudTypesresult = await response.json();
+    if (!response.ok) {
+      throw new Error(`HTTP 錯誤！狀態：${response.status}`);
+    }
+    console.log(fraudTypesresult.data);
+    const { status, data, message } = fraudTypesresult;
+
+    if (status === 200) {
+      fraudTypes.value = data;
+      console.log("詐騙來源:", fraudTypes.value);
+    } else {
+      console.error("API錯誤:", message);
+      errorMessage.value = message;
+    }
+  } catch (error) {
+    console.error("Fetch 錯誤: ", error);
+    errorMessage.value = "獲取失敗";
+  }
+};
+
+onMounted(() => {
+  getFraudSources();
+  getFraudTypes();
+});
+</script>
+
 <style>
+.fraud-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 1px;
+  max-width: 100%;
+}
+
+.fraud-item {
+  display: flex;
+  align-items: center;
+  min-width: 200px;
+  padding: 3px;
+}
+
+@media (min-width: 900px) {
+  .fraud-container {
+    max-width: 900px;
+  }
+}
+
 .container-notification {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   height: 90vh;
+  margin-top: 10px;
 }
 
 .content-box-notification {
@@ -141,6 +225,7 @@ legend {
   border-radius: 5px;
   color: #c8698a;
 }
+
 textarea {
   border-radius: 5px;
   border: none;
