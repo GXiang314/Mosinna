@@ -3,6 +3,7 @@ import { describe, expect, it, jest } from '@jest/globals'
 import MockAdapter from 'axios-mock-adapter'
 import axios from 'axios'
 import * as matchers from 'jest-extended'
+import { CheckResultRepository } from '../repository/checkResult.repository'
 expect.extend(matchers)
 
 class FakeServiceRepository {
@@ -102,5 +103,59 @@ describe(`Unit test for CheckService`, () => {
 
         // then
         expect(result).rejects.toThrow(Error)
+    })
+
+    it(`
+        檢測結果儲存
+        given
+            檢測結果已產生
+            video_id,
+            [
+                {
+                    服務id
+                    檢測結果
+                    詳細描述
+                },...
+            ]
+        when
+            儲存歷史紀錄(repository)
+        then
+            儲存成功
+    `, async () => {
+        //given
+        const videoId = 'AAAAAAAAAAAAAAA'
+        const checkResult = [
+            {
+                service_id: '1',
+                result: 'pass',
+                details: '',
+            },
+            {
+                service_id: '2',
+                result: 'risky',
+                details: '',
+            },
+            {
+                service_id: '3',
+                result: 'pass',
+                details: '',
+            },
+        ]
+        const checkResultRepository = new CheckResultRepository()
+        const checkService = new CheckService(undefined, checkResultRepository)
+        //when
+        jest.spyOn(
+            checkResultRepository,
+            'saveCheckResult',
+        ).mockImplementation()
+        await checkService.saveCheckResult({
+            videoId,
+            checkResult,
+        })
+        //then
+        expect(checkResultRepository.saveCheckResult).toBeCalledWith({
+            videoId,
+            checkResult,
+        })
     })
 })

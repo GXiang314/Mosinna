@@ -22,9 +22,11 @@ export class ServiceRepository {
     }
 
     async getAllAvaliableServices() {
-        return await Service.findAll({
-            where: { status: ServiceStatusEnum.可用 },
-        })
+        return (
+            await Service.findAll({
+                where: { status: ServiceStatusEnum.可用 },
+            })
+        ).map((x) => x.dataValues)
     }
 }
 

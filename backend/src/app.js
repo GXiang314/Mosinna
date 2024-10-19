@@ -6,13 +6,20 @@ import 'dotenv/config'
 import middlewares from './middlewares'
 import api from './api'
 import { sequelize } from './db'
+import path from 'path'
 
 const app = express()
 
 app.use(morgan('dev'))
-app.use(helmet())
+app.use(
+    helmet({
+        // crossOriginEmbedderPolicy: false,
+        crossOriginResourcePolicy: false,
+    }),
+)
 app.use(cors())
 app.use(express.json({ limit: '50mb' }))
+app.use('/resources', express.static(path.resolve(__dirname, '..', 'videos')))
 
 app.get('/', (req, res) => {
     res.json({
