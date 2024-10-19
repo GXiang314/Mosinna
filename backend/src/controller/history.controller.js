@@ -56,10 +56,12 @@ function toCheckHistoryPresenter(params) {
         groups[item?.video?.id] = group
         return groups
     }, {})
+    const resourceHost =
+        process.env.RESOURCES_PATH || 'http://localhost:5000/resources'
     return Object.keys(grouped).map((videoId) => {
         return {
             id: videoId,
-            video_path: grouped[videoId][0].video?.video_path,
+            video_path: `${resourceHost}/${grouped[videoId][0].video?.video_path}`,
             services: grouped[videoId].map((history) => {
                 return {
                     name: history.service.name,

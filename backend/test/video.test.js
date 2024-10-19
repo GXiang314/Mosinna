@@ -63,7 +63,7 @@ describe(`驗收測試 - 影片檢測API`, () => {
         expect(data).toEqual(
             expect.objectContaining({
                 id: expect.any(String),
-                video_path: expect.any(String),
+                video_path: expect.stringContaining(process.env.RESOURCES_PATH),
                 services: expect.arrayContaining([
                     expect.objectContaining({
                         name: expect.toBeOneOf(['AI音訊檢測', '文字詐騙檢測']),
