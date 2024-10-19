@@ -1,4 +1,6 @@
 import { CheckResult } from '../db/checkResult'
+import { Service } from '../db/service'
+import { Video } from '../db/video'
 
 export class CheckResultRepository {
     /**
@@ -19,6 +21,23 @@ export class CheckResultRepository {
                 }
             }),
         )
+    }
+
+    async getCheckHistory() {
+        return (
+            await CheckResult.findAll({
+                include: [
+                    {
+                        model: Video,
+                        as: 'video',
+                    },
+                    {
+                        model: Service,
+                        as: 'service',
+                    },
+                ],
+            })
+        ).map((el) => el.get({ plain: true }))
     }
 }
 

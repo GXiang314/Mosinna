@@ -9,10 +9,12 @@ export class CheckResult extends Model {
         this.belongsTo(models.Service, {
             foreignKey: 'service_id',
             targetKey: 'id',
+            as: 'service',
         })
         this.belongsTo(models.Video, {
             foreignKey: 'video_id',
             targetKey: 'id',
+            as: 'video',
         })
     }
 }

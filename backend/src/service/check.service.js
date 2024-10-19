@@ -27,12 +27,10 @@ export class CheckService {
         const results = await Promise.all(
             services.map(async (service) => {
                 try {
-                    const { data } = await axios.post(
-                        `${service.host}/api/check`,
-                        {
-                            videoData,
-                        },
-                    )
+                    const endPoint = `${service.host}/api/check`
+                    const { data } = await axios.post(endPoint, {
+                        videoData,
+                    })
                     console.log(new Date())
                     console.log(data)
                     return {

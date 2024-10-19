@@ -1,6 +1,31 @@
 import { Model, DataTypes } from 'sequelize'
 
 export class Service extends Model {
+    /**
+     * @type {string}
+     */
+    id
+    /**
+     * @type {string}
+     */
+    name
+    /**
+     * @type {string}
+     */
+    host
+    /**
+     * @type {string}
+     */
+    status
+    /**
+     * @type {string}
+     */
+    created_at
+    /**
+     * @type {string}
+     */
+    updated_at
+
     // 這裡可以定義關聯
     static associate(models) {
         // 定義此 model 與其他 models 的關聯

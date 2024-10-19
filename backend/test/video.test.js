@@ -52,22 +52,21 @@ describe(`驗收測試 - 影片檢測API`, () => {
                 videoData: videoData,
             })
             .expect(200)
-
         // then
         assertCheckVideo_is_VOICE_ricky__TEXT_pass__(result)
 
         // when
         const history = await request(app).get('/api/history')
-
         // then
         const data = history.body.data?.[0]
+        expect(data.services.length).toBe(2)
         expect(data).toEqual(
             expect.objectContaining({
                 id: expect.any(String),
                 video_path: expect.any(String),
                 services: expect.arrayContaining([
                     expect.objectContaining({
-                        name: expect.any(String),
+                        name: expect.toBeOneOf(['AI音訊檢測', '文字詐騙檢測']),
                         result: expect.toBeOneOf(['pass', 'risky']),
                         details: expect.toBeOneOf([
                             undefined,
@@ -75,12 +74,14 @@ describe(`驗收測試 - 影片檢測API`, () => {
                         ]),
                     }),
                 ]),
+                checked_at: expect.any(String),
             }),
         )
     })
 })
 function assertCheckVideo_is_VOICE_ricky__TEXT_pass__(result) {
     const data = result.body?.data
+    expect(data?.length).toBeGreaterThan(0)
     data.forEach((item) => {
         expect(item.id).toEqual(expect.any(String))
         expect(item.name).toBeOneOf(['AI音訊檢測', '文字詐騙檢測'])
