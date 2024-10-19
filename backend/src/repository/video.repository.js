@@ -13,8 +13,8 @@ export class VideoRepository {
         //提取出 MIME 類型，例如 video/mp4
         const mime = arr[0].match(/:(.*?);/)[1]
         // 取後面的部分作為檔案的副檔名
-        const extension = mime.split('/')[1]
-        const fileName = `${Date.now()}.${extension}`
+        const fileExtension = getExtention(mime)
+        const fileName = `${Date.now()}.${fileExtension}`
         // 轉換成二進位
         const bstr = Buffer.from(arr[1], 'base64')
         //儲存影片的資料夾
@@ -41,4 +41,15 @@ export class VideoRepository {
     }
 }
 
+function getExtention(mime) {
+    const mimeType_to_extention = {
+        'video/mp4': 'mp4',
+        'video/x-matroska': 'mkv',
+        'video/quicktime': 'mov',
+        'video/x-msvideo': 'avi',
+        'video/x-flv': 'flv',
+        'video/webm': 'webm',
+    }
+    return mimeType_to_extention[mime]
+}
 export default new VideoRepository()
