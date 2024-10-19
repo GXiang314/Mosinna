@@ -10,7 +10,7 @@
         "lint": "eslint --fix src test",
         "prettier": "prettier src test --write",
         "format": "npm run prettier && npm run lint",
-        "test": "jest --runInBand",
+        "test:unit": "jest --runInBand --testMatch **/service/*.test.js --watch",
         "test:e2e": "npm run migrate:test:undo:all && npm run migrate:test && npm run test",
         "migrate:dev": "sequelize-cli db:migrate --config src/db/config/config.json --env development",
         "migrate:test": "sequelize-cli db:migrate --config src/db/config/config.json --env test",
