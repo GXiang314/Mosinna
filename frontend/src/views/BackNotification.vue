@@ -46,6 +46,43 @@
     </div>
   </form>
 </template>
+<!-- <script>
+import { ref } from "vue";
+const postData = async () => {
+  const url = "http://localhost:5000/api/check";
+  const data = {
+    videoData: videoData.value,
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP 錯誤！狀態：${response.status}`);
+    }
+
+    const jsonData = await response.json();
+    console.log("伺服器回應:", jsonData);
+
+    localStorage.setItem("apiResponseData", JSON.stringify(jsonData.data));
+
+    const storedData = localStorage.getItem("apiResponseData");
+    console.log("儲存在 localStorage 的資料:", JSON.parse(storedData));
+
+    alert("檢測完畢！前往結果頁面。");
+
+    router.push({ path: "/UserReport" });
+  } catch (error) {
+    console.error("Fetch 錯誤: ", error);
+  }
+};
+</script> -->
 <style>
 .container-notification {
   display: flex;

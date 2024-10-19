@@ -5,23 +5,63 @@
         <p>歷史紀錄</p>
       </div>
       <hr class="divider" />
+
       <div class="grid-container">
-        <div v-for="(item, index) in items" :key="index" class="grid-item">
+        <div
+          v-for="(item, index) in paginatedItems"
+          :key="index"
+          class="grid-item"
+        >
           <div class="rectangle-container">
-            <div class="rect-bottom"></div>
             <div class="rect-top">
-              <div class="date-time">{{ item.date }}</div>
+              <video
+                v-if="item.videoUrl"
+                :src="item.videoUrl"
+                controls
+                class="video-player"
+              ></video>
               <button class="image-button" @click="showPopup(item)">
                 <img src="/search.png" class="image" />
               </button>
             </div>
+            <div class="rect-bottom"></div>
           </div>
         </div>
       </div>
+
+      <div class="pagination">
+        <button @click="changePage(1)" :disabled="currentPage === 1">
+          &lt;&lt;
+        </button>
+        <button
+          @click="changePage(currentPage - 1)"
+          :disabled="currentPage === 1"
+        >
+          &lt;
+        </button>
+        <button v-for="page in pages" :key="page" @click="changePage(page)">
+          {{ page }}
+        </button>
+        <button
+          @click="changePage(currentPage + 1)"
+          :disabled="currentPage === totalPages"
+        >
+          &gt;
+        </button>
+        <button v-for="page in pages" :key="page" @click="changePage(page)">
+          {{ page }}
+        </button>
+        <button
+          @click="changePage(totalPages)"
+          :disabled="currentPage === totalPages"
+        >
+          &gt;&gt;
+        </button>
+      </div>
+
       <div v-if="showModal" class="modal-overlay">
         <div class="modal-content">
           <div class="post-close" @click="closePopup">&#x58;</div>
-          <h3>{{ currentItem?.date }}</h3>
           <div class="content-box-report"></div>
           <div class="title-section">
             <p>歷史分析</p>
@@ -43,7 +83,7 @@
                 <div
                   :style="{
                     backgroundColor:
-                      gridItem.value === 'Hazardous' ? '#C8698A' : '#7FD27D',
+                      gridItem.value === 'risky' ? '#C8698A' : '#7FD27D',
                   }"
                   class="grid-items"
                 >
@@ -57,20 +97,20 @@
           </div>
           <div v-if="showModalshare" class="modal-overlay">
             <div class="modal-content-back">
-              <h3>{{ currentItemshare?.date }}</h3>
               <div class="post-close" @click="closePopupshare">&#x58;</div>
               <p class="share-title">建立貼文</p>
               <div class="share-msg">
-                <textarea class="share-content" type="content">
-註解說明</textarea
-                >
+                <textarea
+                  v-model="detailsText"
+                  class="share-content"
+                ></textarea>
                 <input class="share-tag" type="tag" value="#魔聲仔" />
               </div>
               <div class="post-end">
                 <div class="share-text">
                   <p class="share-to">分享至：</p>
                   <a href="https://www.instagram.com/" target="_blank">
-                    <img src="/social.png" alt="Facebook" />
+                    <img src="/social.png" alt="Instagram" />
                   </a>
                   <a href="https://www.facebook.com/" target="_blank">
                     <img src="/facebook.png" alt="Facebook" />
@@ -81,42 +121,91 @@
           </div>
         </div>
       </div>
-      <table class="pages" id="page-member">
-        <td><a>&lt;&lt;</a></td>
-        <td><a>2</a></td>
-        <td><a>3</a></td>
-        <td><b>4</b></td>
-        <td><a>5</a></td>
-        <td><a>6</a></td>
-        <td><a>&gt;&gt;</a></td>
-      </table>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import Chart from "chart.js/auto";
 
-const items = ref([
-  { date: "2024-10-08 10:00" },
-  { date: "2024-10-07 14:30" },
-  { date: "2024-10-06 09:15" },
-  { date: "2024-10-06 09:15" },
-  { date: "2024-10-06 09:15" },
-  { date: "2024-10-06 09:15" },
-]);
-
-const gridItems = ref([
-  { title: "內容檢測", value: "Hazardous" },
-  { title: "深偽音訊", value: "Hazardous" },
-  { title: "換臉檢測", value: "safe" },
-  { title: "臉部特徵檢測", value: "Hazardous" },
-]);
-
+const items = ref([]);
+const gridItems = ref([]);
 const showModal = ref(false);
 const currentItem = ref(null);
 const showModalshare = ref(false);
+const detailsText = ref("");
+
+const currentPage = ref(1);
+const itemsPerPage = 5;
+
+const totalPages = computed(() => Math.ceil(items.value.length / itemsPerPage));
+
+const paginatedItems = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  return items.value.slice(start, end);
+});
+
+const changePage = (page) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+  }
+};
+
+const loadLocalStorageData = () => {
+  const storedData = JSON.parse(localStorage.getItem("apiResponseData"));
+  if (storedData && Array.isArray(storedData)) {
+    items.value = storedData.map((item) => ({
+      videoUrl: item.videoUrl,
+      name: item.name,
+      result: item.result,
+      details: item.details,
+    }));
+
+    gridItems.value = storedData.map((item) => ({
+      title: item.name,
+      value: item.result === "risky" ? "risky" : "pass",
+    }));
+
+    const firstItemWithText = storedData.find((item) => item.details?.text);
+    if (firstItemWithText) {
+      detailsText.value = firstItemWithText.details.text;
+    }
+  }
+};
+
+const renderChart1 = () => {
+  const ctxh = document.getElementById("myChartHistory")?.getContext("2d");
+  if (ctxh) {
+    const riskyCount = gridItems.value.filter(
+      (item) => item.value === "risky"
+    ).length;
+    const passCount = gridItems.value.filter(
+      (item) => item.value === "pass"
+    ).length;
+
+    new Chart(ctxh, {
+      type: "doughnut",
+      data: {
+        labels: ["pass", "risky"],
+        datasets: [
+          {
+            label: "檢測結果",
+            data: [passCount, riskyCount],
+            backgroundColor: ["#7FD27D", "#C8698A"],
+            borderColor: "rgba(75, 192, 192, 1)",
+            borderWidth: 0.2,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+      },
+    });
+  }
+};
 
 const showPopup = (item) => {
   currentItem.value = item;
@@ -138,32 +227,8 @@ const closePopupshare = () => {
   showModalshare.value = false;
 };
 
-const renderChart1 = () => {
-  const ctxh = document.getElementById("myChartHistory")?.getContext("2d");
-  if (ctxh) {
-    new Chart(ctxh, {
-      type: "doughnut",
-      data: {
-        labels: ["safe", "Hazardous"],
-        datasets: [
-          {
-            label: "deepfake",
-            data: [3, 1],
-            backgroundColor: ["#7FD27D", "#C8698A"],
-            borderColor: "rgba(75, 192, 192, 1)",
-            borderWidth: 0.2,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-      },
-    });
-  }
-};
-
 onMounted(() => {
+  loadLocalStorageData();
   renderChart1();
 });
 </script>
@@ -191,6 +256,12 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   padding-bottom: 100px;
+}
+
+.content-section-report {
+  height: 400px;
+  display: flex;
+  flex-direction: row;
 }
 
 .title-section {

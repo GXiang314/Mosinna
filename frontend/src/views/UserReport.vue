@@ -21,7 +21,7 @@
             <div
               :style="{
                 backgroundColor:
-                  gridItem.value === 'Hazardous' ? '#C8698A' : '#7FD27D',
+                  gridItem.value === 'risky' ? '#C8698A' : '#7FD27D',
               }"
               class="grid-items"
             >
@@ -36,25 +36,41 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import Chart from "chart.js/auto";
 
-const gridItems = ref([
-  { title: "內容檢測", value: "Hazardous" },
-  { title: "深偽音訊", value: "Hazardous" },
-  { title: "換臉檢測", value: "safe" },
-  { title: "臉部特徵檢測", value: "Hazardous" },
-]);
+const gridItems = ref([]);
+const router = useRouter();
+
+const loadGridDataFromLocalStorage = () => {
+  const storedData = JSON.parse(localStorage.getItem("apiResponseData"));
+  if (storedData && Array.isArray(storedData)) {
+    gridItems.value = storedData.map((item) => ({
+      title: item.name,
+      value: item.result === "risky" ? "risky" : "pass",
+    }));
+    return true;
+  }
+  return false;
+};
 
 const renderChart = () => {
   const ctx = document.getElementById("myChart").getContext("2d");
+  const safeCount = gridItems.value.filter(
+    (item) => item.value === "pass"
+  ).length;
+  const hazardousCount = gridItems.value.filter(
+    (item) => item.value === "risky"
+  ).length;
+
   new Chart(ctx, {
     type: "doughnut",
     data: {
-      labels: ["safe", "Hazardous"],
+      labels: ["pass", "risky"],
       datasets: [
         {
           label: "deepfake",
-          data: [3, 1],
+          data: [safeCount, hazardousCount],
           backgroundColor: ["#7FD27D", "#C8698A"],
           borderColor: "rgba(75, 192, 192, 1)",
           borderWidth: 0.2,
@@ -69,7 +85,14 @@ const renderChart = () => {
 };
 
 onMounted(() => {
-  renderChart();
+  const dataLoaded = loadGridDataFromLocalStorage();
+
+  if (dataLoaded) {
+    renderChart();
+  } else {
+    alert("尚未完成檢測，前往上傳影片頁面。");
+    router.push({ path: "/" });
+  }
 });
 </script>
 
@@ -94,7 +117,7 @@ onMounted(() => {
   padding: 15px;
   text-align: left;
   color: #f1ecff;
-  font-size: 20px;
+  font-size: 25px;
   border-radius: 10px 10px 0 0;
   background-color: #6b5276;
 }
@@ -105,6 +128,7 @@ onMounted(() => {
 }
 
 .content-section-report {
+  font-size: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;

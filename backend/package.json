@@ -13,8 +13,11 @@
         "test:unit": "jest --runInBand --testMatch **/service/*.test.js --watch",
         "test:e2e": "npm run migrate:test:undo:all && npm run migrate:test && jest --runInBand --verbose",
         "migrate:dev": "sequelize-cli db:migrate --config src/db/config/config.json --env development",
+        "migrate:dev:undo:all": "sequelize-cli db:migrate:undo:all --config src/db/config/config.json --env development",
         "migrate:test": "sequelize-cli db:migrate --config src/db/config/config.json --env test",
         "migrate:test:undo:all": "sequelize-cli db:migrate:undo:all --config src/db/config/config.json --env test",
+        "make:model": "sequelize-cli model:generate --models-path src/db --config src/db/config/config.json --name ",
+        "make:migration": "sequelize-cli migration:generate --name",
         "prepare": "cd .. && husky backend/.husky"
     },
     "keywords": [],
