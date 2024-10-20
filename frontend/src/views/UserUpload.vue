@@ -23,7 +23,7 @@
             @change="handleFileChange"
             accept="video/*"
           />
-          <button class="upload-button">確認上傳</button>
+          <button class="upload-button">點擊上傳</button>
         </div>
       </div>
     </div>

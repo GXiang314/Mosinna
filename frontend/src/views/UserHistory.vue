@@ -5,59 +5,60 @@
         <p>歷史紀錄</p>
       </div>
       <hr class="divider" />
-
-      <div class="grid-container">
-        <div
-          v-for="(item, index) in paginatedItems"
-          :key="index"
-          class="grid-item"
-        >
-          <div class="rectangle-container">
-            <div class="rect-top">
-              <video
-                v-if="item.videoUrl"
-                :src="item.videoUrl"
-                controls
-                class="video-player"
-              ></video>
-              <button class="image-button" @click="showPopup(item)">
-                <img src="/search.png" class="image" />
-              </button>
+      <div class="history-main">
+        <div class="grid-container">
+          <div
+            v-for="(item, index) in paginatedItems"
+            :key="index"
+            class="grid-item"
+          >
+            <div class="rectangle-container">
+              <div class="rect-top">
+                <video
+                  v-if="item.videoUrl"
+                  :src="item.videoUrl"
+                  controls
+                  class="video-player"
+                ></video>
+                <button class="image-button" @click="showPopup(item)">
+                  <img src="/search.png" class="image" />
+                </button>
+              </div>
+              <div class="rect-bottom"></div>
             </div>
-            <div class="rect-bottom"></div>
           </div>
         </div>
-      </div>
 
-      <!-- <div class="pagination">
-        <button @click="changePage(1)" :disabled="currentPage === 1">
-          &lt;&lt;
-        </button>
-        <button
-          @click="changePage(currentPage - 1)"
-          :disabled="currentPage === 1"
-        >
-          &lt;
-        </button>
-        <button v-for="page in pages" :key="page" @click="changePage(page)">
-          {{ page }}
-        </button>
-        <button
-          @click="changePage(currentPage + 1)"
-          :disabled="currentPage === totalPages"
-        >
-          &gt;
-        </button>
-        <button v-for="page in pages" :key="page" @click="changePage(page)">
-          {{ page }}
-        </button>
-        <button
-          @click="changePage(totalPages)"
-          :disabled="currentPage === totalPages"
-        >
-          &gt;&gt;
-        </button>
-      </div> -->
+        <div class="pagination">
+          <button @click="changePage(1)" :disabled="currentPage === 1">
+            &lt;&lt;
+          </button>
+          <button
+            @click="changePage(currentPage - 1)"
+            :disabled="currentPage === 1"
+          >
+            &lt;
+          </button>
+          <button v-for="page in pages" :key="page" @click="changePage(page)">
+            {{ page }}
+          </button>
+          <button
+            @click="changePage(currentPage + 1)"
+            :disabled="currentPage === totalPages"
+          >
+            &gt;
+          </button>
+          <button v-for="page in pages" :key="page" @click="changePage(page)">
+            {{ page }}
+          </button>
+          <button
+            @click="changePage(totalPages)"
+            :disabled="currentPage === totalPages"
+          >
+            &gt;&gt;
+          </button>
+        </div>
+      </div>
 
       <div v-if="showModal" class="modal-overlay">
         <div class="modal-content">
@@ -167,7 +168,6 @@ const gethistory = async () => {
   try {
     const response = await fetch(url, { method: "GET" });
 
-    // 檢查 HTTP 回應狀態
     if (!response.ok) {
       throw new Error(`HTTP 錯誤！狀態：${response.status}`);
     }
@@ -175,29 +175,18 @@ const gethistory = async () => {
     const videoHistoryresult = await response.json();
     const storedData = videoHistoryresult.data;
 
-    // 確保有資料返回
     if (storedData && Array.isArray(storedData)) {
-      // 映射 items 和 gridItems 資料
       items.value = storedData.map((item) => ({
-        videoUrl: item.video_path || "", // 修改為 video_path
-        name: `影片ID: ${item.id}`, // 這裡可以按需求修改
+        videoUrl: item.video_path || "",
+        name: `影片ID: ${item.id}`,
         services: item.services.map((service) => ({
           name: service.name || "未知服務",
           result: service.result || "未知",
-          details: JSON.parse(service.details || "{}"), // 解析 details JSON
+          details: JSON.parse(service.details || "{}"),
         })),
-        checkedAt: item.checked_at || "", // 添加檢測時間
+        checkedAt: item.checked_at || "",
       }));
 
-      // 映射 gridItems 供前端顯示
-      gridItems.value = storedData.flatMap((item) =>
-        item.services.map((service) => ({
-          title: service.name,
-          value: service.result === "risky" ? "risky" : "pass",
-        }))
-      );
-
-      // 找到第一個有文本的 details
       const firstItemWithText = storedData
         .flatMap((item) => item.services)
         .find((service) => service.details && service.details.confidence);
@@ -223,6 +212,20 @@ const gethistory = async () => {
   }
 };
 
+const showPopup = (item) => {
+  currentItem.value = item;
+  showModal.value = true;
+
+  gridItems.value = item.services.map((service) => ({
+    title: service.name,
+    value: service.result === "risky" ? "risky" : "pass",
+  }));
+
+  setTimeout(() => {
+    renderChart1();
+  }, 300);
+};
+
 const renderChart1 = () => {
   const ctxh = document.getElementById("myChartHistory")?.getContext("2d");
   if (ctxh) {
@@ -236,7 +239,6 @@ const renderChart1 = () => {
     new Chart(ctxh, {
       type: "doughnut",
       data: {
-        // labels: ["pass", "risky"],
         datasets: [
           {
             label: "檢測結果",
@@ -254,15 +256,6 @@ const renderChart1 = () => {
     });
   }
 };
-
-const showPopup = (item) => {
-  currentItem.value = item;
-  showModal.value = true;
-  setTimeout(() => {
-    renderChart1();
-  }, 300);
-};
-
 const closePopup = () => {
   showModal.value = false;
 };
@@ -318,13 +311,12 @@ onMounted(() => {
   background-color: #6b5276;
   width: 90%;
   max-width: 900px;
-  height: 80%;
+  height: 90%;
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
   position: relative;
   display: flex;
   flex-direction: column;
-  padding-bottom: 100px;
 }
 
 .content-section-report {
@@ -341,7 +333,12 @@ onMounted(() => {
   border: none;
   border-top: 2px solid #ddd;
 }
-
+.history-main {
+  height: 110%;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+}
 .grid-item {
   position: relative;
   background-color: transparent;
@@ -410,6 +407,7 @@ onMounted(() => {
 .pagination {
   text-align: center;
   margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .pagination button {
