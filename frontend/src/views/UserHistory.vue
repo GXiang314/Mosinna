@@ -115,6 +115,13 @@
                   <a href="https://www.facebook.com/" target="_blank">
                     <img src="/facebook.png" alt="Facebook" />
                   </a>
+                  <a
+                    id="threadShareButton"
+                    @click="shareToThreads"
+                    style="cursor: pointer"
+                  >
+                    <img src="/threads.png" alt="Threads" />
+                  </a>
                 </div>
               </div>
             </div>
@@ -225,6 +232,20 @@ const showPopupshare = () => {
 
 const closePopupshare = () => {
   showModalshare.value = false;
+};
+
+const shareToThreads = () => {
+  // To-Do: 增加 context template
+  const context = detailsText.value;
+  const historyId = 0;
+  const url = `魔聲仔檢測結果：http://localhost:8080/UserHistory?id=${historyId}`;
+  const tag = "#魔聲仔";
+
+  const shareUrl = `https://threads.net/intent/post?text=${encodeURIComponent(
+    context + "\n\n" + url + "\n" + tag
+  )}`;
+
+  window.open(shareUrl, "_blank");
 };
 
 onMounted(() => {
