@@ -188,7 +188,7 @@ const renderChart1 = () => {
     new Chart(ctxh, {
       type: "doughnut",
       data: {
-        labels: ["pass", "risky"],
+        // labels: ["pass", "risky"],
         datasets: [
           {
             label: "檢測結果",

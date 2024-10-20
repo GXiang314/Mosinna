@@ -278,7 +278,7 @@ textarea {
 .share-tag {
   color: #765273;
 }
-.modal-content-back {
+.modal-content {
   width: 60%;
   height: 80%;
   background-color: hsla(256, 100%, 96%, 0.9);

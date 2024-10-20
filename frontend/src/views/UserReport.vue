@@ -66,10 +66,9 @@ const renderChart = () => {
   new Chart(ctx, {
     type: "doughnut",
     data: {
-      labels: ["pass", "risky"],
       datasets: [
         {
-          label: "deepfake",
+          label: "檢測結果",
           data: [safeCount, hazardousCount],
           backgroundColor: ["#7FD27D", "#C8698A"],
           borderColor: "rgba(75, 192, 192, 1)",
