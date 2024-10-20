@@ -29,7 +29,7 @@
         </div>
       </div>
 
-      <div class="pagination">
+      <!-- <div class="pagination">
         <button @click="changePage(1)" :disabled="currentPage === 1">
           &lt;&lt;
         </button>
@@ -57,7 +57,7 @@
         >
           &gt;&gt;
         </button>
-      </div>
+      </div> -->
 
       <div v-if="showModal" class="modal-overlay">
         <div class="modal-content">
@@ -142,6 +142,8 @@ const showModal = ref(false);
 const currentItem = ref(null);
 const showModalshare = ref(false);
 const detailsText = ref("");
+const videoHistory = ref([]);
+const errorMessage = ref("");
 
 const currentPage = ref(1);
 const itemsPerPage = 5;
@@ -160,25 +162,64 @@ const changePage = (page) => {
   }
 };
 
-const loadLocalStorageData = () => {
-  const storedData = JSON.parse(localStorage.getItem("apiResponseData"));
-  if (storedData && Array.isArray(storedData)) {
-    items.value = storedData.map((item) => ({
-      videoUrl: item.videoUrl,
-      name: item.name,
-      result: item.result,
-      details: item.details,
-    }));
+const gethistory = async () => {
+  const url = "http://localhost:5000/api/history";
+  try {
+    const response = await fetch(url, { method: "GET" });
 
-    gridItems.value = storedData.map((item) => ({
-      title: item.name,
-      value: item.result === "risky" ? "risky" : "pass",
-    }));
-
-    const firstItemWithText = storedData.find((item) => item.details?.text);
-    if (firstItemWithText) {
-      detailsText.value = firstItemWithText.details.text;
+    // 檢查 HTTP 回應狀態
+    if (!response.ok) {
+      throw new Error(`HTTP 錯誤！狀態：${response.status}`);
     }
+
+    const videoHistoryresult = await response.json();
+    const storedData = videoHistoryresult.data;
+
+    // 確保有資料返回
+    if (storedData && Array.isArray(storedData)) {
+      // 映射 items 和 gridItems 資料
+      items.value = storedData.map((item) => ({
+        videoUrl: item.video_path || "", // 修改為 video_path
+        name: `影片ID: ${item.id}`, // 這裡可以按需求修改
+        services: item.services.map((service) => ({
+          name: service.name || "未知服務",
+          result: service.result || "未知",
+          details: JSON.parse(service.details || "{}"), // 解析 details JSON
+        })),
+        checkedAt: item.checked_at || "", // 添加檢測時間
+      }));
+
+      // 映射 gridItems 供前端顯示
+      gridItems.value = storedData.flatMap((item) =>
+        item.services.map((service) => ({
+          title: service.name,
+          value: service.result === "risky" ? "risky" : "pass",
+        }))
+      );
+
+      // 找到第一個有文本的 details
+      const firstItemWithText = storedData
+        .flatMap((item) => item.services)
+        .find((service) => service.details && service.details.confidence);
+      if (firstItemWithText) {
+        detailsText.value = `服務: ${firstItemWithText.name}, 信心度: ${firstItemWithText.details.confidence}`;
+      }
+    } else {
+      console.error("未找到有效資料");
+    }
+
+    const { status, message } = videoHistoryresult;
+
+    if (status === 200) {
+      videoHistory.value = storedData;
+      console.log("檢測歷史:", videoHistory.value);
+    } else {
+      console.error("API 錯誤:", message);
+      videoHistory.value = message;
+    }
+  } catch (error) {
+    console.error("Fetch 錯誤: ", error);
+    errorMessage.value = "獲取資料失敗，請稍後重試";
   }
 };
 
@@ -249,12 +290,19 @@ const shareToThreads = () => {
 };
 
 onMounted(() => {
-  loadLocalStorageData();
+  gethistory();
   renderChart1();
+  // gethistory();
 });
 </script>
 
 <style>
+.modal-content-back {
+  background-color: hwb(256 93% 0% / 0.9);
+  width: 60%;
+  height: 80%;
+  border-radius: 5px;
+}
 #myChartHistory {
   width: 100%;
   height: 400px;
@@ -343,6 +391,7 @@ onMounted(() => {
   height: 225px;
   background-color: #fff;
   z-index: 2;
+  overflow: hidden;
 }
 
 .image-button {
@@ -427,7 +476,11 @@ onMounted(() => {
   color: #fff;
   background-color: #cbb8ff;
 }
-
+.video-player {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 @media (max-width: 1024px) {
   .grid-container {
     grid-template-columns: repeat(2, 1fr);
