@@ -14,7 +14,7 @@
             </p>
           </div>
           <label v-if="!uploadedFile" class="upload-label">
-            點擊這裡或拖曳檔案上傳
+            點擊按鈕或拖曳檔案上傳
           </label>
           <input
             id="file-upload"
@@ -23,7 +23,13 @@
             @change="handleFileChange"
             accept="video/*"
           />
-          <button class="upload-button">點擊上傳</button>
+          <button @click="triggerFileUpload" class="upload-button btn">
+            點擊上傳
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
         </div>
       </div>
     </div>
@@ -119,6 +125,57 @@ const postData = async () => {
 </script>
 
 <style scoped>
+.btn {
+  display: inline-block;
+  position: relative;
+  z-index: 1;
+  min-width: 200px;
+  background: #ffffff;
+  border: 2px solid #c8698a;
+  border-radius: 4px;
+  color: #c8698a;
+  font-size: 1rem;
+  text-transform: uppercase;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  overflow: hidden;
+  transition: 0.5s;
+  padding: 10px 20px;
+}
+.btn span {
+  position: absolute;
+  width: 25%;
+  height: 100%;
+  background-color: #c8698a;
+  transform: translateY(150%);
+  border-radius: 50%;
+  left: calc((var(--n) - 1) * 25%);
+  transition: 0.5s;
+  transition-delay: calc((var(--n) - 1) * 0.1s);
+  z-index: -1;
+}
+.btn:hover {
+  color: rgb(255, 255, 255);
+}
+.btn:focus {
+  color: #c8698a;
+}
+.btn:hover span {
+  transform: translateY(0) scale(2);
+}
+.btn span:nth-child(1) {
+  --n: 1;
+}
+.btn span:nth-child(2) {
+  --n: 2;
+}
+.btn span:nth-child(3) {
+  --n: 3;
+}
+.btn span:nth-child(4) {
+  --n: 4;
+}
 .all-content {
   height: 90vh;
 }
@@ -187,17 +244,6 @@ h2 {
 
 .file-input {
   display: none;
-}
-.upload-button {
-  margin-top: 15px;
-  padding: 10px 20px;
-  background-color: #c8698a;
-  color: #f1ecff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
 }
 
 .upload-button:hover {

@@ -48,9 +48,6 @@
           >
             &gt;
           </button>
-          <button v-for="page in pages" :key="page" @click="changePage(page)">
-            {{ page }}
-          </button>
           <button
             @click="changePage(totalPages)"
             :disabled="currentPage === totalPages"
@@ -147,7 +144,7 @@ const videoHistory = ref([]);
 const errorMessage = ref("");
 
 const currentPage = ref(1);
-const itemsPerPage = 5;
+const itemsPerPage = 6;
 
 const totalPages = computed(() => Math.ceil(items.value.length / itemsPerPage));
 
@@ -155,6 +152,14 @@ const paginatedItems = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage;
   const end = start + itemsPerPage;
   return items.value.slice(start, end);
+});
+const pages = computed(() => {
+  const total = totalPages.value;
+  const pageArray = [];
+  for (let i = 1; i <= total; i++) {
+    pageArray.push(i);
+  }
+  return pageArray;
 });
 
 const changePage = (page) => {
