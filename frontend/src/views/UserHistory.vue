@@ -317,6 +317,7 @@ onMounted(() => {
   position: relative;
   display: flex;
   flex-direction: column;
+  padding-bottom: 50px;
 }
 
 .content-section-report {
@@ -481,7 +482,7 @@ onMounted(() => {
 }
 @media (max-width: 1024px) {
   .grid-container {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .rect-bottom,
@@ -518,6 +519,11 @@ onMounted(() => {
   .image {
     width: 60px;
   }
+  .content-section-report {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
 }
 
 @media (max-width: 480px) {
@@ -546,6 +552,11 @@ onMounted(() => {
   }
   .image {
     width: 50px;
+  }
+  .content-section-report {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
   }
 }
 </style>

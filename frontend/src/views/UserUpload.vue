@@ -29,7 +29,12 @@
     </div>
 
     <div v-if="isLoading" class="loading-overlay">
-      <div class="loading-spinner"></div>
+      <div class="loading-spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
     </div>
   </div>
 </template>
@@ -205,7 +210,7 @@ h2 {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: hsla(256, 100%, 86%, 0.8);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -213,20 +218,58 @@ h2 {
 }
 
 .loading-spinner {
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  border-left-color: #4caf50;
+  width: 200px;
+  height: 200px;
+  position: relative;
+}
+
+.loading-spinner div {
+  border-width: 5px;
+  border-style: solid;
+  border-left-color: #fff;
+  border-right-color: #fff;
+  border-top-color: transparent;
+  border-bottom-color: transparent;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
+  position: absolute;
+  animation: spin 2s ease infinite;
+}
+
+.loading-spinner div:nth-child(1) {
+  width: 50px;
+  height: 50px;
+  left: 70px;
+  top: 70px;
+}
+
+.loading-spinner div:nth-child(2) {
+  width: 70px;
+  height: 70px;
+  left: 60px;
+  top: 60px;
+  animation-delay: 0.1s;
+}
+
+.loading-spinner div:nth-child(3) {
+  width: 90px;
+  height: 90px;
+  left: 50px;
+  top: 50px;
+  animation-delay: 0.2s;
+}
+.loading-spinner div:nth-child(4) {
+  width: 110px;
+  height: 110px;
+  left: 40px;
+  top: 40px;
 }
 
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
+  50% {
+    transform: rotate(100deg);
   }
   100% {
-    transform: rotate(360deg);
+    transform: rotate(0);
   }
 }
 
