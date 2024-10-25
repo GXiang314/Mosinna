@@ -14,7 +14,7 @@
             </p>
           </div>
           <label v-if="!uploadedFile" class="upload-label">
-            點擊這裡或拖曳檔案上傳
+            點擊按鈕或拖曳檔案上傳
           </label>
           <input
             id="file-upload"
@@ -23,13 +23,24 @@
             @change="handleFileChange"
             accept="video/*"
           />
-          <button class="upload-button">確認上傳</button>
+          <button @click="triggerFileUpload" class="upload-button btn">
+            點擊上傳
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
         </div>
       </div>
     </div>
 
     <div v-if="isLoading" class="loading-overlay">
-      <div class="loading-spinner"></div>
+      <div class="loading-spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
     </div>
   </div>
 </template>
@@ -114,6 +125,57 @@ const postData = async () => {
 </script>
 
 <style scoped>
+.btn {
+  display: inline-block;
+  position: relative;
+  z-index: 1;
+  min-width: 200px;
+  background: #ffffff;
+  border: 2px solid #c8698a;
+  border-radius: 4px;
+  color: #c8698a;
+  font-size: 1rem;
+  text-transform: uppercase;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  overflow: hidden;
+  transition: 0.5s;
+  padding: 10px 20px;
+}
+.btn span {
+  position: absolute;
+  width: 25%;
+  height: 100%;
+  background-color: #c8698a;
+  transform: translateY(150%);
+  border-radius: 50%;
+  left: calc((var(--n) - 1) * 25%);
+  transition: 0.5s;
+  transition-delay: calc((var(--n) - 1) * 0.1s);
+  z-index: -1;
+}
+.btn:hover {
+  color: rgb(255, 255, 255);
+}
+.btn:focus {
+  color: #c8698a;
+}
+.btn:hover span {
+  transform: translateY(0) scale(2);
+}
+.btn span:nth-child(1) {
+  --n: 1;
+}
+.btn span:nth-child(2) {
+  --n: 2;
+}
+.btn span:nth-child(3) {
+  --n: 3;
+}
+.btn span:nth-child(4) {
+  --n: 4;
+}
 .all-content {
   height: 90vh;
 }
@@ -183,17 +245,6 @@ h2 {
 .file-input {
   display: none;
 }
-.upload-button {
-  margin-top: 15px;
-  padding: 10px 20px;
-  background-color: #c8698a;
-  color: #f1ecff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
-}
 
 .upload-button:hover {
   background-color: #ac355f;
@@ -205,7 +256,7 @@ h2 {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: hsla(256, 100%, 86%, 0.8);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -213,20 +264,58 @@ h2 {
 }
 
 .loading-spinner {
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  border-left-color: #4caf50;
+  width: 200px;
+  height: 200px;
+  position: relative;
+}
+
+.loading-spinner div {
+  border-width: 5px;
+  border-style: solid;
+  border-left-color: #fff;
+  border-right-color: #fff;
+  border-top-color: transparent;
+  border-bottom-color: transparent;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
+  position: absolute;
+  animation: spin 2s ease infinite;
+}
+
+.loading-spinner div:nth-child(1) {
+  width: 50px;
+  height: 50px;
+  left: 70px;
+  top: 70px;
+}
+
+.loading-spinner div:nth-child(2) {
+  width: 70px;
+  height: 70px;
+  left: 60px;
+  top: 60px;
+  animation-delay: 0.1s;
+}
+
+.loading-spinner div:nth-child(3) {
+  width: 90px;
+  height: 90px;
+  left: 50px;
+  top: 50px;
+  animation-delay: 0.2s;
+}
+.loading-spinner div:nth-child(4) {
+  width: 110px;
+  height: 110px;
+  left: 40px;
+  top: 40px;
 }
 
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
+  50% {
+    transform: rotate(100deg);
   }
   100% {
-    transform: rotate(360deg);
+    transform: rotate(0);
   }
 }
 

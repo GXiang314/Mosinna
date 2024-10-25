@@ -5,58 +5,56 @@
         <p>歷史紀錄</p>
       </div>
       <hr class="divider" />
-
-      <div class="grid-container">
-        <div
-          v-for="(item, index) in paginatedItems"
-          :key="index"
-          class="grid-item"
-        >
-          <div class="rectangle-container">
-            <div class="rect-top">
-              <video
-                v-if="item.videoUrl"
-                :src="item.videoUrl"
-                controls
-                class="video-player"
-              ></video>
-              <button class="image-button" @click="showPopup(item)">
-                <img src="/search.png" class="image" />
-              </button>
+      <div class="history-main">
+        <div class="grid-container">
+          <div
+            v-for="(item, index) in paginatedItems"
+            :key="index"
+            class="grid-item"
+          >
+            <div class="rectangle-container">
+              <div class="rect-top">
+                <video
+                  v-if="item.videoUrl"
+                  :src="item.videoUrl"
+                  controls
+                  class="video-player"
+                ></video>
+                <button class="image-button" @click="showPopup(item)">
+                  <img src="/search.png" class="image" />
+                </button>
+              </div>
+              <div class="rect-bottom"></div>
             </div>
-            <div class="rect-bottom"></div>
           </div>
         </div>
-      </div>
 
-      <div class="pagination">
-        <button @click="changePage(1)" :disabled="currentPage === 1">
-          &lt;&lt;
-        </button>
-        <button
-          @click="changePage(currentPage - 1)"
-          :disabled="currentPage === 1"
-        >
-          &lt;
-        </button>
-        <button v-for="page in pages" :key="page" @click="changePage(page)">
-          {{ page }}
-        </button>
-        <button
-          @click="changePage(currentPage + 1)"
-          :disabled="currentPage === totalPages"
-        >
-          &gt;
-        </button>
-        <button v-for="page in pages" :key="page" @click="changePage(page)">
-          {{ page }}
-        </button>
-        <button
-          @click="changePage(totalPages)"
-          :disabled="currentPage === totalPages"
-        >
-          &gt;&gt;
-        </button>
+        <div class="pagination">
+          <button @click="changePage(1)" :disabled="currentPage === 1">
+            &lt;&lt;
+          </button>
+          <button
+            @click="changePage(currentPage - 1)"
+            :disabled="currentPage === 1"
+          >
+            &lt;
+          </button>
+          <button v-for="page in pages" :key="page" @click="changePage(page)">
+            {{ page }}
+          </button>
+          <button
+            @click="changePage(currentPage + 1)"
+            :disabled="currentPage === totalPages"
+          >
+            &gt;
+          </button>
+          <button
+            @click="changePage(totalPages)"
+            :disabled="currentPage === totalPages"
+          >
+            &gt;&gt;
+          </button>
+        </div>
       </div>
 
       <div v-if="showModal" class="modal-overlay">
@@ -115,6 +113,13 @@
                   <a href="https://www.facebook.com/" target="_blank">
                     <img src="/facebook.png" alt="Facebook" />
                   </a>
+                  <a
+                    id="threadShareButton"
+                    @click="shareToThreads"
+                    style="cursor: pointer"
+                  >
+                    <img src="/threads.png" alt="Threads" />
+                  </a>
                 </div>
               </div>
             </div>
@@ -135,9 +140,11 @@ const showModal = ref(false);
 const currentItem = ref(null);
 const showModalshare = ref(false);
 const detailsText = ref("");
+const videoHistory = ref([]);
+const errorMessage = ref("");
 
 const currentPage = ref(1);
-const itemsPerPage = 5;
+const itemsPerPage = 6;
 
 const totalPages = computed(() => Math.ceil(items.value.length / itemsPerPage));
 
@@ -146,6 +153,14 @@ const paginatedItems = computed(() => {
   const end = start + itemsPerPage;
   return items.value.slice(start, end);
 });
+const pages = computed(() => {
+  const total = totalPages.value;
+  const pageArray = [];
+  for (let i = 1; i <= total; i++) {
+    pageArray.push(i);
+  }
+  return pageArray;
+});
 
 const changePage = (page) => {
   if (page >= 1 && page <= totalPages.value) {
@@ -153,26 +168,67 @@ const changePage = (page) => {
   }
 };
 
-const loadLocalStorageData = () => {
-  const storedData = JSON.parse(localStorage.getItem("apiResponseData"));
-  if (storedData && Array.isArray(storedData)) {
-    items.value = storedData.map((item) => ({
-      videoUrl: item.videoUrl,
-      name: item.name,
-      result: item.result,
-      details: item.details,
-    }));
+const gethistory = async () => {
+  const url = "http://localhost:5000/api/history";
+  try {
+    const response = await fetch(url, { method: "GET" });
 
-    gridItems.value = storedData.map((item) => ({
-      title: item.name,
-      value: item.result === "risky" ? "risky" : "pass",
-    }));
-
-    const firstItemWithText = storedData.find((item) => item.details?.text);
-    if (firstItemWithText) {
-      detailsText.value = firstItemWithText.details.text;
+    if (!response.ok) {
+      throw new Error(`HTTP 錯誤！狀態：${response.status}`);
     }
+
+    const videoHistoryresult = await response.json();
+    const storedData = videoHistoryresult.data;
+
+    if (storedData && Array.isArray(storedData)) {
+      items.value = storedData.map((item) => ({
+        videoUrl: item.video_path || "",
+        name: `影片ID: ${item.id}`,
+        services: item.services.map((service) => ({
+          name: service.name || "未知服務",
+          result: service.result || "未知",
+          details: JSON.parse(service.details || "{}"),
+        })),
+        checkedAt: item.checked_at || "",
+      }));
+
+      const firstItemWithText = storedData
+        .flatMap((item) => item.services)
+        .find((service) => service.details && service.details.confidence);
+      if (firstItemWithText) {
+        detailsText.value = `服務: ${firstItemWithText.name}, 信心度: ${firstItemWithText.details.confidence}`;
+      }
+    } else {
+      console.error("未找到有效資料");
+    }
+
+    const { status, message } = videoHistoryresult;
+
+    if (status === 200) {
+      videoHistory.value = storedData;
+      console.log("檢測歷史:", videoHistory.value);
+    } else {
+      console.error("API 錯誤:", message);
+      videoHistory.value = message;
+    }
+  } catch (error) {
+    console.error("Fetch 錯誤: ", error);
+    errorMessage.value = "獲取資料失敗，請稍後重試";
   }
+};
+
+const showPopup = (item) => {
+  currentItem.value = item;
+  showModal.value = true;
+
+  gridItems.value = item.services.map((service) => ({
+    title: service.name,
+    value: service.result === "risky" ? "risky" : "pass",
+  }));
+
+  setTimeout(() => {
+    renderChart1();
+  }, 300);
 };
 
 const renderChart1 = () => {
@@ -188,7 +244,6 @@ const renderChart1 = () => {
     new Chart(ctxh, {
       type: "doughnut",
       data: {
-        labels: ["pass", "risky"],
         datasets: [
           {
             label: "檢測結果",
@@ -206,15 +261,6 @@ const renderChart1 = () => {
     });
   }
 };
-
-const showPopup = (item) => {
-  currentItem.value = item;
-  showModal.value = true;
-  setTimeout(() => {
-    renderChart1();
-  }, 300);
-};
-
 const closePopup = () => {
   showModal.value = false;
 };
@@ -227,13 +273,34 @@ const closePopupshare = () => {
   showModalshare.value = false;
 };
 
+const shareToThreads = () => {
+  // To-Do: 增加 context template
+  const context = detailsText.value;
+  const historyId = 0;
+  const url = `魔聲仔檢測結果：http://localhost:8080/UserHistory?id=${historyId}`;
+  const tag = "#魔聲仔";
+
+  const shareUrl = `https://threads.net/intent/post?text=${encodeURIComponent(
+    context + "\n\n" + url + "\n" + tag
+  )}`;
+
+  window.open(shareUrl, "_blank");
+};
+
 onMounted(() => {
-  loadLocalStorageData();
+  gethistory();
   renderChart1();
+  // gethistory();
 });
 </script>
 
 <style>
+.modal-content-back {
+  background-color: hwb(256 93% 0% / 0.9);
+  width: 60%;
+  height: 80%;
+  border-radius: 5px;
+}
 #myChartHistory {
   width: 100%;
   height: 400px;
@@ -249,13 +316,13 @@ onMounted(() => {
   background-color: #6b5276;
   width: 90%;
   max-width: 900px;
-  height: 80%;
+  height: 90%;
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
   position: relative;
   display: flex;
   flex-direction: column;
-  padding-bottom: 100px;
+  padding-bottom: 50px;
 }
 
 .content-section-report {
@@ -272,7 +339,12 @@ onMounted(() => {
   border: none;
   border-top: 2px solid #ddd;
 }
-
+.history-main {
+  height: 110%;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+}
 .grid-item {
   position: relative;
   background-color: transparent;
@@ -322,6 +394,7 @@ onMounted(() => {
   height: 225px;
   background-color: #fff;
   z-index: 2;
+  overflow: hidden;
 }
 
 .image-button {
@@ -340,6 +413,7 @@ onMounted(() => {
 .pagination {
   text-align: center;
   margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .pagination button {
@@ -406,10 +480,14 @@ onMounted(() => {
   color: #fff;
   background-color: #cbb8ff;
 }
-
+.video-player {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 @media (max-width: 1024px) {
   .grid-container {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .rect-bottom,
@@ -446,6 +524,11 @@ onMounted(() => {
   .image {
     width: 60px;
   }
+  .content-section-report {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
 }
 
 @media (max-width: 480px) {
@@ -474,6 +557,11 @@ onMounted(() => {
   }
   .image {
     width: 50px;
+  }
+  .content-section-report {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
   }
 }
 </style>
