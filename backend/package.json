@@ -12,6 +12,7 @@
         "format": "npm run prettier && npm run lint",
         "test:unit": "jest --runInBand --testMatch **/service/*.test.js --watch",
         "test:e2e": "npm run migrate:test:undo:all && npm run migrate:test && jest --runInBand --verbose",
+        "test:cov": "npm run migrate:test:undo:all && npm run migrate:test && jest --runInBand --verbose --coverage",
         "migrate:dev": "sequelize-cli db:migrate --config src/db/config/config.json --env development",
         "migrate:dev:undo:all": "sequelize-cli db:migrate:undo:all --config src/db/config/config.json --env development",
         "migrate:test": "sequelize-cli db:migrate --config src/db/config/config.json --env test",
