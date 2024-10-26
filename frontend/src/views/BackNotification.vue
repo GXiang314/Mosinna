@@ -87,7 +87,7 @@ const fraudTypes = ref([]);
 const errorMessage = ref("");
 
 const getFraudSources = async () => {
-  const url = "http://localhost:5000/api/list/fraudSources";
+  const url = `${process.env.VUE_APP_BACKEND_HOST}/api/list/fraudSources`;
 
   try {
     const response = await fetch(url, {
@@ -113,7 +113,7 @@ const getFraudSources = async () => {
   }
 };
 const getFraudTypes = async () => {
-  const url = "http://localhost:5000/api/list/fraudTypes";
+  const url = `${process.env.VUE_APP_BACKEND_HOST}/api/list/fraudTypes`;
 
   try {
     const response = await fetch(url, {

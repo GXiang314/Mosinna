@@ -84,7 +84,7 @@ const handleFileChange = (event) => {
 };
 
 const postData = async () => {
-  const url = "http://localhost:5000/api/check";
+  const url = `${process.env.VUE_APP_BACKEND_HOST}/api/check`;
   const data = {
     videoData: videoData.value,
   };
