@@ -44,7 +44,7 @@ export default (sequelize) => {
                 },
             },
             result: {
-                type: DataTypes.STRING,
+                type: DataTypes.TEXT('long'),
                 allowNull: false,
             },
             details: {

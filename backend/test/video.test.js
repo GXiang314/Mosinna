@@ -1,18 +1,12 @@
-import { expect, describe, it, beforeAll } from '@jest/globals'
+import { expect, describe, it } from '@jest/globals'
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter'
 import ServiceStatusEnum from '../src/enum/service-status.enum'
 import { Service } from '../src/db/service'
 import request from 'supertest'
 import app from '../src/app'
-import { sequelize } from '../src/db'
 
 describe(`驗收測試 - 影片檢測API`, () => {
-    beforeAll((done) => {
-        sequelize.sync({ force: true }).then(() => {
-            done()
-        })
-    })
     it(`
         Given
             videoData: <使用者上傳的 dataURL>
