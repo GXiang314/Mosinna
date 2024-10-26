@@ -169,7 +169,7 @@ const changePage = (page) => {
 };
 
 const gethistory = async () => {
-  const url = "http://localhost:5000/api/history";
+  const url = `${process.env.VUE_APP_BACKEND_HOST}/api/history`;
   try {
     const response = await fetch(url, { method: "GET" });
 
