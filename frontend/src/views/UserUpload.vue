@@ -21,9 +21,8 @@
             type="file"
             class="file-input"
             @change="handleFileChange"
-            accept="video/*"
           />
-          <button @click="triggerFileUpload" class="upload-button btn">
+          <button class="upload-button btn">
             點擊上傳
             <span></span>
             <span></span>
@@ -130,10 +129,10 @@ const postData = async () => {
   position: relative;
   z-index: 1;
   min-width: 200px;
-  background: #ffffff;
+  background: #c8698a;
   border: 2px solid #c8698a;
   border-radius: 4px;
-  color: #c8698a;
+  color: #fff;
   font-size: 1rem;
   text-transform: uppercase;
   font-weight: bold;

@@ -1,7 +1,9 @@
 <template>
   <div class="background-container">
     <nav class="navbar">
-      <div class="logo"><img src="/vision.png" /></div>
+      <div>
+        <router-link class="logo" to="/"><img src="/vision.png" /></router-link>
+      </div>
       <ul class="nav-links">
         <li><router-link to="/">上傳影片</router-link></li>
         <li><router-link to="/UserReport">結果分析</router-link></li>
