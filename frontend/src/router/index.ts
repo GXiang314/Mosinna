@@ -3,7 +3,6 @@ import Home from '@/views/UserUpload.vue'
 import Report from '@/views/UserReport.vue'
 import History from '@/views/UserHistory.vue'
 import Notifi from '@/views/BackNotification.vue'
-import App from '../App.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -13,7 +12,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/UserReport',
-    name: '結果分析',
+    name: '結果分析', 
     component: Report
   },
   {
@@ -28,7 +27,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/:pathMatch(.*)*',
-    component: App
+    redirect: '/'
   }
 ]
 
