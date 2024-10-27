@@ -150,58 +150,13 @@
         </div>
       </div>
 
-      <!-- Share Modal -->
-      <div
+      <!-- ShareResult Component -->
+      <ShareResult
         v-if="showModalshare"
-        class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 px-4 sm:px-0"
-      >
-        <div class="bg-[#f1ecff] rounded-lg p-4 sm:p-6 w-full sm:w-4/5 lg:w-3/5 h-[90vh] sm:h-4/5">
-          <div class="flex justify-between items-center mb-2 sm:mb-4">
-            <h3 class="text-lg sm:text-xl font-semibold">建立貼文</h3>
-            <button
-              @click="closePopupshare"
-              class="text-gray-500 hover:text-gray-700 text-xl sm:text-2xl"
-            >
-              ×
-            </button>
-          </div>
-
-          <div class="space-y-2 sm:space-y-4">
-            <textarea
-              v-model="detailsText"
-              class="w-full h-32 sm:h-40 p-3 sm:p-4 text-sm sm:text-base rounded border border-gray-300 resize-none"
-            ></textarea>
-            <input
-              type="text"
-              value="#魔聲仔"
-              class="w-full p-2 text-sm sm:text-base rounded border border-gray-300"
-            />
-          </div>
-
-          <div class="mt-4 sm:mt-6">
-            <p class="text-gray-700 mb-2 text-sm sm:text-base">分享至：</p>
-            <div class="flex gap-3 sm:gap-4">
-              <a
-                href="https://www.instagram.com/"
-                target="_blank"
-                class="hover:opacity-80"
-              >
-                <img src="/social.png" alt="Instagram" class="w-6 h-6 sm:w-8 sm:h-8" />
-              </a>
-              <a
-                href="https://www.facebook.com/"
-                target="_blank"
-                class="hover:opacity-80"
-              >
-                <img src="/facebook.png" alt="Facebook" class="w-6 h-6 sm:w-8 sm:h-8" />
-              </a>
-              <button @click="shareToThreads" class="hover:opacity-80">
-                <img src="/threads.png" alt="Threads" class="w-6 h-6 sm:w-8 sm:h-8" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+        :details-text="detailsText"
+        @close="closePopupshare"
+        @share-to-threads="shareToThreads"
+      />
     </div>
   </div>
 </template>
@@ -210,6 +165,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Chart from 'chart.js/auto'
+import ShareResult from '../components/ShareResult.vue';
 
 // State
 const items = ref([])
@@ -285,7 +241,11 @@ const showPopup = (item) => {
     title: service.name,
     value: service.result === 'risky' ? 'risky' : 'pass'
   }))
-
+    // 設置分享文字
+    const riskyService = gridItems.value?.filter(item => item.value === 'risky').map(item => `「${item.title}」`)
+  if (riskyService.length > 0) {
+    detailsText.value = `要小心！我在魔聲仔中的${riskyService.join('、')}中檢測到可疑內容，建議大家小心使用。`
+  }
   setTimeout(renderChart, 300)
 }
 

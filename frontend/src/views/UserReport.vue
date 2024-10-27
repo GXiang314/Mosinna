@@ -28,8 +28,25 @@
               {{ gridItem.value === 'risky' ? '可疑內容' : '尚未發現風險' }}
             </div>
           </div>
+
+          <div class="text-center mt-4 sm:mt-6">
+            <button
+              @click="showPopupshare"
+              class="px-4 sm:px-6 py-1.5 sm:py-2 bg-pink-500 text-white text-sm sm:text-base rounded hover:bg-pink-400 transition-colors"
+            >
+              分享
+            </button>
+          </div>
         </div>
       </div>
+
+      <!-- ShareResult Component -->
+      <ShareResult
+        v-if="showModalshare"
+        :details-text="detailsText"
+        @close="closePopupshare"
+        @share-to-threads="shareToThreads"
+      />
     </div>
   </div>
 </template>
@@ -38,9 +55,12 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Chart from 'chart.js/auto'
+import ShareResult from '../components/ShareResult.vue'
 
 const gridItems = ref([])
 const router = useRouter()
+const showModalshare = ref(false)
+const detailsText = ref('')
 
 const initializeGridData = () => {
   const storedData = JSON.parse(localStorage.getItem('apiResponseData'))
@@ -55,7 +75,12 @@ const initializeGridData = () => {
     title: item.name,
     value: item.result === 'risky' ? 'risky' : 'pass'
   }))
-  
+
+  // 設置分享文字
+  const riskyService = gridItems.value?.filter(item => item.value === 'risky').map(item => `「${item.title}」`)
+  if (riskyService.length > 0) {
+    detailsText.value = `要小心！我在魔聲仔中的${riskyService.join('、')}中檢測到可疑內容，建議大家小心使用。`
+  }
   return true
 }
 
@@ -82,6 +107,24 @@ const createDoughnutChart = () => {
       maintainAspectRatio: false
     }
   })
+}
+
+const showPopupshare = () => {
+  showModalshare.value = true
+}
+
+const closePopupshare = () => {
+  showModalshare.value = false
+}
+
+const shareToThreads = () => {
+  const context = detailsText.value
+  const url = `魔聲仔檢測結果：${import.meta.env.VITE_FRONTEND_HOST}/UserReport`
+  const tag = '#魔聲仔'
+  const shareUrl = `https://threads.net/intent/post?text=${encodeURIComponent(
+    `${context}\n\n${url}\n${tag}`
+  )}`
+  window.open(shareUrl, '_blank')
 }
 
 onMounted(() => {
