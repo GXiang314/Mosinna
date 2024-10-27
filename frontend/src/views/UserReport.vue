@@ -1,31 +1,31 @@
 <template>
-  <div class="container-report">
-    <div class="content-box-report">
-      <div class="title-section">
-        <p>結果分析</p>
+  <div class="h-[90vh] flex justify-center items-center">
+    <div class="w-11/12 md:w-4/5 max-w-[900px] bg-[hsla(256,100%,96%,0.9)] rounded-lg shadow-lg">
+      <div class="bg-[#6b5276] rounded-t-lg">
+        <p class="m-0 py-3 md:py-4 px-4 md:px-6 text-left text-[#f1ecff] text-xl md:text-2xl">結果分析</p>
       </div>
-      <hr class="divider" />
-      <div class="content-section-report">
-        <div class="image-wrapper-report">
-          <div class="chart-container">
-            <canvas id="myChart"></canvas>
-          </div>
+
+      <hr class="border-t-2 border-gray-300" />
+
+      <div class="flex flex-col items-center p-3 md:p-5 text-base md:text-xl">
+        <div class="relative w-full h-[150px] md:h-[200px]">
+          <canvas id="myChart"></canvas>
         </div>
-        <div class="grid-container-report">
+
+        <div class="w-full flex flex-col items-center">
           <div
             v-for="(gridItem, gridIndex) in gridItems"
             :key="gridIndex"
-            class="grid-row"
+            class="flex flex-row justify-between w-full max-w-[400px] my-2 md:my-2.5 mx-2 md:mx-2.5 gap-2"
           >
-            <div class="grid-title">{{ gridItem.title }}</div>
+            <div class="flex-1 p-2 md:p-2.5 text-center rounded bg-[#6b5276] text-[#dad8eb]">
+              {{ gridItem.title }}
+            </div>
             <div
-              :style="{
-                backgroundColor:
-                  gridItem.value === 'risky' ? '#C8698A' : '#7FD27D',
-              }"
-              class="grid-items"
+              class="flex-1 p-2 md:p-2.5 text-white text-center rounded"
+              :class="gridItem.value === 'risky' ? 'bg-[#C8698A]' : 'bg-[#5bc259]'"
             >
-              {{ gridItem.value }}
+              {{ gridItem.value === 'risky' ? '可疑內容' : '尚未發現風險' }}
             </div>
           </div>
         </div>
@@ -35,146 +35,58 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
-import Chart from "chart.js/auto";
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import Chart from 'chart.js/auto'
 
-const gridItems = ref([]);
-const router = useRouter();
+const gridItems = ref([])
+const router = useRouter()
 
-const loadGridDataFromLocalStorage = () => {
-  const storedData = JSON.parse(localStorage.getItem("apiResponseData"));
-  if (storedData && Array.isArray(storedData)) {
-    gridItems.value = storedData.map((item) => ({
-      title: item.name,
-      value: item.result === "risky" ? "risky" : "pass",
-    }));
-    return true;
+const initializeGridData = () => {
+  const storedData = JSON.parse(localStorage.getItem('apiResponseData'))
+  
+  if (!Array.isArray(storedData)) {
+    alert('尚未完成檢測，前往上傳影片頁面。')
+    router.push('/')
+    return false
   }
-  return false;
-};
 
-const renderChart = () => {
-  const ctx = document.getElementById("myChart").getContext("2d");
-  const safeCount = gridItems.value.filter(
-    (item) => item.value === "pass"
-  ).length;
-  const hazardousCount = gridItems.value.filter(
-    (item) => item.value === "risky"
-  ).length;
+  gridItems.value = storedData.map(item => ({
+    title: item.name,
+    value: item.result === 'risky' ? 'risky' : 'pass'
+  }))
+  
+  return true
+}
+
+const createDoughnutChart = () => {
+  const ctx = document.getElementById('myChart').getContext('2d')
+  const results = gridItems.value.reduce((acc, item) => {
+    acc[item.value]++
+    return acc
+  }, { pass: 0, risky: 0 })
 
   new Chart(ctx, {
-    type: "doughnut",
+    type: 'doughnut',
     data: {
-      datasets: [
-        {
-          label: "檢測結果",
-          data: [safeCount, hazardousCount],
-          backgroundColor: ["#7FD27D", "#C8698A"],
-          borderColor: "rgba(75, 192, 192, 1)",
-          borderWidth: 0.2,
-        },
-      ],
+      datasets: [{
+        label: '檢測結果',
+        data: [results.pass, results.risky],
+        backgroundColor: ['#5bc259', '#C8698A'],
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 0.2
+      }]
     },
     options: {
       responsive: true,
-      maintainAspectRatio: false,
-    },
-  });
-};
+      maintainAspectRatio: false
+    }
+  })
+}
 
 onMounted(() => {
-  const dataLoaded = loadGridDataFromLocalStorage();
-
-  if (dataLoaded) {
-    renderChart();
-  } else {
-    alert("尚未完成檢測，前往上傳影片頁面。");
-    router.push({ path: "/" });
+  if (initializeGridData()) {
+    createDoughnutChart()
   }
-});
+})
 </script>
-
-<style>
-.container-report {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 90vh;
-}
-
-.content-box-report {
-  background-color: hsla(256, 100%, 96%, 0.9);
-  border-radius: 10px;
-  width: 80%;
-  max-width: 900px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-}
-
-.title-section p {
-  margin: 0;
-  padding: 15px;
-  text-align: left;
-  color: #f1ecff;
-  font-size: 25px;
-  border-radius: 10px 10px 0 0;
-  background-color: #6b5276;
-}
-
-.divider {
-  border: none;
-  border-top: 2px solid #ddd;
-}
-
-.content-section-report {
-  font-size: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.chart-container {
-  position: relative;
-  width: 100%;
-  height: 200px;
-}
-
-.grid-container-report {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
-.grid-row {
-  display: flex;
-  justify-content: space-between;
-  margin: 10px;
-  max-width: 400px;
-}
-
-.grid-title,
-.grid-items {
-  flex: 1;
-  padding: 10px;
-  width: 200px;
-  text-align: center;
-  border-radius: 5px;
-}
-
-.grid-title {
-  background-color: #6b5276;
-  color: #dad8eb;
-  margin-right: 10px;
-}
-
-.grid-items {
-  background-color: #eee;
-}
-@media (max-width: 480px) {
-  .grid-title,
-  .grid-items {
-    width: 100px;
-  }
-}
-</style>

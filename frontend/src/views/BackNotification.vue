@@ -80,69 +80,69 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted } from 'vue'
 
-const fraudSources = ref([]);
-const fraudTypes = ref([]);
-const errorMessage = ref("");
+const fraudSources = ref([])
+const fraudTypes = ref([])
+const errorMessage = ref('')
 
 const getFraudSources = async () => {
-  const url = `${process.env.VUE_APP_BACKEND_HOST}/api/list/fraudSources`;
+  const url = `${import.meta.env.VITE_BACKEND_HOST}/api/list/fraudSources`
 
   try {
     const response = await fetch(url, {
-      method: "GET",
-    });
-    const result = await response.json();
+      method: 'GET'
+    })
+    const result = await response.json()
     if (!response.ok) {
-      throw new Error(`HTTP 錯誤！狀態：${response.status}`);
+      throw new Error(`HTTP 錯誤！狀態：${response.status}`)
     }
-    console.log(result.data);
-    const { status, data, message } = result;
+    console.log(result.data)
+    const { status, data, message } = result
 
     if (status === 200) {
-      fraudSources.value = data;
-      console.log("詐騙來源:", fraudSources.value);
+      fraudSources.value = data
+      console.log('詐騙來源:', fraudSources.value)
     } else {
-      console.error("API錯誤:", message);
-      errorMessage.value = message;
+      console.error('API錯誤:', message)
+      errorMessage.value = message
     }
   } catch (error) {
-    console.error("Fetch 錯誤: ", error);
-    errorMessage.value = "獲取失敗";
+    console.error('Fetch 錯誤: ', error)
+    errorMessage.value = '獲取失敗'
   }
-};
+}
 const getFraudTypes = async () => {
-  const url = `${process.env.VUE_APP_BACKEND_HOST}/api/list/fraudTypes`;
+  const url = `${import.meta.env.VITE_BACKEND_HOST}/api/list/fraudTypes`
 
   try {
     const response = await fetch(url, {
-      method: "GET",
-    });
-    const fraudTypesresult = await response.json();
+      method: 'GET'
+    })
+    const fraudTypesresult = await response.json()
     if (!response.ok) {
-      throw new Error(`HTTP 錯誤！狀態：${response.status}`);
+      throw new Error(`HTTP 錯誤！狀態：${response.status}`)
     }
-    console.log(fraudTypesresult.data);
-    const { status, data, message } = fraudTypesresult;
+    console.log(fraudTypesresult.data)
+    const { status, data, message } = fraudTypesresult
 
     if (status === 200) {
-      fraudTypes.value = data;
-      console.log("詐騙來源:", fraudTypes.value);
+      fraudTypes.value = data
+      console.log('詐騙來源:', fraudTypes.value)
     } else {
-      console.error("API錯誤:", message);
-      errorMessage.value = message;
+      console.error('API錯誤:', message)
+      errorMessage.value = message
     }
   } catch (error) {
-    console.error("Fetch 錯誤: ", error);
-    errorMessage.value = "獲取失敗";
+    console.error('Fetch 錯誤: ', error)
+    errorMessage.value = '獲取失敗'
   }
-};
+}
 
 onMounted(() => {
-  getFraudSources();
-  getFraudTypes();
-});
+  getFraudSources()
+  getFraudTypes()
+})
 </script>
 
 <style>
@@ -208,8 +208,8 @@ onMounted(() => {
 span {
   color: #c8698a;
 }
-input[type="text"],
-input[type="number"] {
+input[type='text'],
+input[type='number'] {
   border-radius: 5px;
   border: none;
   border-left: 8px solid #e7c1ce;
@@ -288,7 +288,7 @@ textarea {
   z-index: 99;
 }
 .share-msg textarea,
-.share-msg input[type="tag"] {
+.share-msg input[type='tag'] {
   border-radius: 5px;
   border: none;
   background-color: transparent;
