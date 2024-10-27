@@ -77,7 +77,9 @@
                 :key="gridIndex"
                 class="grid-row"
               >
-                <div class="grid-title">{{ gridItem.title }}</div>
+                <div class="grid-title">
+                  {{ gridItem.title }}
+                </div>
                 <div
                   :style="{
                     backgroundColor:

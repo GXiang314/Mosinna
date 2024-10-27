@@ -56,6 +56,45 @@ export class CheckController {
             res.json(apiFormatter(error, 500))
         }
     }
+
+    /**
+     * @param {import("express").Request} req
+     * @param {import("express").Response} res
+     */
+    async uploadUrl(req, res) {
+        try {
+            // proxy to ai detection services
+            const { checkUrl } = req.body
+
+            const videoData = await this.videoService.getVideoData(checkUrl)
+
+            const result = await this.checkService.proxyToCheckService({
+                videoData,
+            })
+
+            // store video
+            const videoId = await this.videoService.saveVideo(videoData)
+
+            // store check result
+            await this.checkService.saveCheckResult({
+                video_id: videoId,
+                checkResult: result.map((x) => {
+                    return {
+                        service_id: x.id,
+                        details: x?.details,
+                        result: x.result,
+                    }
+                }),
+            })
+
+            // response to client
+            res.json(apiFormatter(result))
+        } catch (error) {
+            console.log(error)
+
+            res.json(apiFormatter(error, 500))
+        }
+    }
 }
 
 export default new CheckController()
