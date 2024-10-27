@@ -49,25 +49,30 @@ export class CheckController {
             })
 
             // response to client
-            res.json(apiFormatter(result))
+            return res.json(apiFormatter(result))
         } catch (error) {
             console.log(error)
-
-            res.json(apiFormatter(error, 500))
+            return res.status(500).json(apiFormatter(null, 500, '伺服器錯誤'))
         }
     }
 
     /**
-     * @param {import("express").Request} req
+     * @param {import("express").Request<unknown, unknown, {checkUrl: string}>} req
      * @param {import("express").Response} res
      */
     async uploadUrl(req, res) {
         try {
-            // proxy to ai detection services
             const { checkUrl } = req.body
+            if (
+                !checkUrl ||
+                !checkUrl.startsWith('https://www.youtube.com/watch')
+            ) {
+                throw new Error('只接受 YouTube 影片連結')
+            }
 
             const videoData = await this.videoService.getVideoData(checkUrl)
 
+            // proxy to ai detection services
             const result = await this.checkService.proxyToCheckService({
                 videoData,
             })
@@ -88,11 +93,15 @@ export class CheckController {
             })
 
             // response to client
-            res.json(apiFormatter(result))
+            return res.json(apiFormatter(result))
         } catch (error) {
             console.log(error)
-
-            res.json(apiFormatter(error, 500))
+            if (error.message === '只接受 YouTube 影片連結') {
+                return res
+                    .status(400)
+                    .json(apiFormatter(null, 400, error.message))
+            }
+            return res.status(500).json(apiFormatter(null, 500, '伺服器錯誤'))
         }
     }
 }
