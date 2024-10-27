@@ -34,11 +34,11 @@ export class CheckController {
             })
 
             // store video
-            const videoId = await this.videoService.saveVideo(videoData)
+            const video = await this.videoService.saveVideo(videoData)
 
             // store check result
             await this.checkService.saveCheckResult({
-                video_id: videoId,
+                video_id: video?.id,
                 checkResult: result.map((x) => {
                     return {
                         service_id: x.id,
@@ -48,8 +48,16 @@ export class CheckController {
                 }),
             })
 
+            const resourceHost =
+                process.env.RESOURCES_PATH || 'http://localhost:5000/resources'
             // response to client
-            return res.json(apiFormatter(result))
+            return res.json(
+                apiFormatter({
+                    id: video?.id,
+                    video_path: `${resourceHost}/${video?.video_path}`,
+                    checkList: result,
+                }),
+            )
         } catch (error) {
             console.log(error)
             return res.status(500).json(apiFormatter(null, 500, '伺服器錯誤'))
@@ -78,11 +86,11 @@ export class CheckController {
             })
 
             // store video
-            const videoId = await this.videoService.saveVideo(videoData)
+            const video = await this.videoService.saveVideo(videoData)
 
             // store check result
             await this.checkService.saveCheckResult({
-                video_id: videoId,
+                video_id: video?.id,
                 checkResult: result.map((x) => {
                     return {
                         service_id: x.id,
@@ -92,8 +100,16 @@ export class CheckController {
                 }),
             })
 
+            const resourceHost =
+                process.env.RESOURCES_PATH || 'http://localhost:5000/resources'
             // response to client
-            return res.json(apiFormatter(result))
+            return res.json(
+                apiFormatter({
+                    id: video?.id,
+                    video_path: `${resourceHost}/${video?.video_path}`,
+                    checkList: result,
+                }),
+            )
         } catch (error) {
             console.log(error)
             if (error.message === '只接受 YouTube 影片連結') {

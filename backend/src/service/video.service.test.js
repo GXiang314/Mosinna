@@ -3,7 +3,7 @@ import videoService from './video.service'
 import videoRepository from '../repository/video.repository'
 import { randomUUID } from 'crypto'
 
-describe(`驗收測試 - 影片儲存`, () => {
+describe(`單元測試 - 影片儲存`, () => {
     it(`
         given
         影片DataUrl:{VideoData}
@@ -29,6 +29,6 @@ describe(`驗收測試 - 影片儲存`, () => {
         const result = await videoService.saveVideo(payload.videoData)
         // then
         expect(videoRepository.saveVideo).toBeCalledWith(payload.videoData)
-        expect(result).toBe(videoId)
+        expect(result.id).toBe(videoId)
     })
 })
