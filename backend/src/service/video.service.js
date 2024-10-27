@@ -7,11 +7,11 @@ export class VideoService {
     /**
      *
      * @param {string} dataUrl
-     * @returns {Promise<string>}
+     * @returns {Promise<{id: string, video_path: string}>}
      */
     async saveVideo(dataUrl) {
         const video = await videoRepository.saveVideo(dataUrl)
-        return video.id
+        return video
     }
 
     /**

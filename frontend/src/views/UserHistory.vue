@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center items-center min-h-screen bg-purple-900 py-8">
+  <div class="flex justify-center items-center min-h-screen py-8">
     <div
       class="w-11/12 max-w-4xl bg-[#6b5276] rounded-lg shadow-lg flex flex-col relative pb-12"
     >
@@ -100,7 +100,7 @@
         v-if="showModal"
         class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
       >
-        <div class="bg-white rounded-lg p-4 sm:p-6 w-[95%] sm:w-11/12 max-w-2xl mx-2 sm:mx-auto">
+        <div class="bg-white rounded-lg p-4 sm:p-6 w-[95%] sm:w-11/12 max-w-2xl mx-2 sm:mx-auto max-h-[90vh] overflow-y-auto">
           <div class="flex justify-between items-center mb-2 sm:mb-4">
             <h2 class="text-lg sm:text-xl font-semibold">歷史分析</h2>
             <button
@@ -139,6 +139,18 @@
             </div>
           </div>
 
+          <!-- Video Section -->
+          <div class="mt-6 sm:mt-8 mx-auto w-full max-w-[600px]">
+            <div class="relative w-full pt-[56.25%]">
+              <video
+                v-if="currentItem?.videoUrl"
+                :src="currentItem.videoUrl"
+                controls
+                class="absolute inset-0 w-full h-full object-cover rounded-lg"
+              ></video>
+            </div>
+          </div>
+
           <div class="text-center mt-4 sm:mt-6">
             <button
               @click="showPopupshare"
@@ -163,7 +175,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import Chart from 'chart.js/auto'
 import ShareResult from '../components/ShareResult.vue';
 
@@ -176,6 +188,7 @@ const showModalshare = ref(false)
 const detailsText = ref('')
 const errorMessage = ref('')
 const currentPage = ref(1)
+const route = useRoute()
 
 // Constants
 const ITEMS_PER_PAGE = 6
@@ -210,6 +223,7 @@ const fetchHistory = async () => {
 
     if (Array.isArray(storedData)) {
       items.value = storedData.map((item) => ({
+        id: item.id,
         videoUrl: item.video_path || '',
         name: `影片ID: ${item.id}`,
         services: item.services.map((service) => ({
@@ -226,6 +240,13 @@ const fetchHistory = async () => {
 
       if (firstServiceWithConfidence) {
         detailsText.value = `服務: ${firstServiceWithConfidence.name}, 信心度: ${firstServiceWithConfidence.details.confidence}`
+      }
+      
+      // 檢查 URL 中是否有 id 參數
+      const historyId = route.query.id
+      if (historyId) {
+        const item = items.value.find((video) => video.id === historyId)
+        if (item) showPopup(item)
       }
     }
   } catch (error) {
@@ -282,9 +303,10 @@ const renderChart = () => {
 
 const shareToThreads = () => {
   const context = detailsText.value
+  const shareId = currentItem.value?.id
   const url = `魔聲仔檢測結果：${
     import.meta.env.VITE_FRONTEND_HOST
-  }/UserHistory?id=0`
+  }/UserHistory?id=${shareId}`
   const tag = '#魔聲仔'
   const shareUrl = `https://threads.net/intent/post?text=${encodeURIComponent(
     `${context}\n\n${url}\n${tag}`
@@ -295,13 +317,6 @@ const shareToThreads = () => {
 // Lifecycle
 onMounted(() => {
   fetchHistory()
-  const router = useRouter()
-  const historyId = router.params?.id
-
-  if (historyId) {
-    const item = items.value.find((video) => video.id === historyId)
-    if (item) showPopup(item)
-  }
 })
 
 const closePopup = () => {

@@ -61,17 +61,19 @@ const gridItems = ref([])
 const router = useRouter()
 const showModalshare = ref(false)
 const detailsText = ref('')
+const shareId = ref('')
 
 const initializeGridData = () => {
   const storedData = JSON.parse(localStorage.getItem('apiResponseData'))
+  const checkList = storedData?.checkList
   
-  if (!Array.isArray(storedData)) {
+  if (!storedData || !Array.isArray(checkList)) {
     alert('尚未完成檢測，前往上傳影片頁面。')
     router.push('/')
     return false
   }
 
-  gridItems.value = storedData.map(item => ({
+  gridItems.value = checkList.map(item => ({
     title: item.name,
     value: item.result === 'risky' ? 'risky' : 'pass'
   }))
@@ -81,6 +83,7 @@ const initializeGridData = () => {
   if (riskyService.length > 0) {
     detailsText.value = `要小心！我在魔聲仔中的${riskyService.join('、')}中檢測到可疑內容，建議大家小心使用。`
   }
+  shareId.value = storedData.id
   return true
 }
 
@@ -119,7 +122,7 @@ const closePopupshare = () => {
 
 const shareToThreads = () => {
   const context = detailsText.value
-  const url = `魔聲仔檢測結果：${import.meta.env.VITE_FRONTEND_HOST}/UserReport`
+  const url = `魔聲仔檢測結果：${import.meta.env.VITE_FRONTEND_HOST}/UserReport?id=${shareId.value}`
   const tag = '#魔聲仔'
   const shareUrl = `https://threads.net/intent/post?text=${encodeURIComponent(
     `${context}\n\n${url}\n${tag}`

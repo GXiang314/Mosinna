@@ -172,8 +172,15 @@ describe(`驗收測試 - youtube 影片上傳檢測 API`, () => {
 })
 function assertCheckVideo_is_VOICE_ricky__TEXT_pass__(result) {
     const data = result.body?.data
-    expect(data?.length).toBeGreaterThan(0)
-    data.forEach((item) => {
+
+    expect(data?.id).toEqual(expect.any(String))
+    expect(data?.video_path).toEqual(
+        expect.stringContaining(process.env.RESOURCES_PATH),
+    )
+
+    const checkList = data?.checkList
+    expect(checkList?.length).toBeGreaterThan(0)
+    checkList.forEach((item) => {
         expect(item.id).toEqual(expect.any(String))
         expect(item.name).toBeOneOf(['AI音訊檢測', '文字詐騙檢測'])
         if (item.name === 'AI音訊檢測') {
