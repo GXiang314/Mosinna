@@ -73,7 +73,8 @@ export class CheckController {
             const { checkUrl } = req.body
             if (
                 !checkUrl ||
-                !checkUrl.startsWith('https://www.youtube.com/watch')
+                (!checkUrl.startsWith('https://www.youtube.com/watch') &&
+                    !checkUrl.startsWith('https://youtu.be/'))
             ) {
                 throw new Error('只接受 YouTube 影片連結')
             }
