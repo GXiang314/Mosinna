@@ -304,7 +304,7 @@ const renderChart = () => {
 const shareToThreads = () => {
   const context = detailsText.value
   const shareId = currentItem.value?.id
-  const url = `魔聲仔檢測結果：${
+  const url = `魔聲仔檢測結果：\n${
     import.meta.env.VITE_FRONTEND_HOST
   }/UserHistory?id=${shareId}`
   const tag = '#魔聲仔'

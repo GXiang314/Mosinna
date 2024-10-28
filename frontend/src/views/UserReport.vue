@@ -122,7 +122,7 @@ const closePopupshare = () => {
 
 const shareToThreads = () => {
   const context = detailsText.value
-  const url = `魔聲仔檢測結果：${import.meta.env.VITE_FRONTEND_HOST}/UserReport?id=${shareId.value}`
+  const url = `魔聲仔檢測結果：\n${import.meta.env.VITE_FRONTEND_HOST}/UserHistory?id=${shareId.value}`
   const tag = '#魔聲仔'
   const shareUrl = `https://threads.net/intent/post?text=${encodeURIComponent(
     `${context}\n\n${url}\n${tag}`
