@@ -1,8 +1,14 @@
 <template>
   <div class="h-[90vh] flex justify-center items-center">
-    <div class="w-11/12 md:w-4/5 max-w-[900px] bg-[hsla(256,100%,96%,0.9)] rounded-lg shadow-lg">
+    <div
+      class="w-11/12 md:w-4/5 max-w-[900px] bg-[hsla(256,100%,96%,0.9)] rounded-lg shadow-lg"
+    >
       <div class="bg-[#6b5276] rounded-t-lg">
-        <p class="m-0 py-3 md:py-4 px-4 md:px-6 text-left text-[#f1ecff] text-xl md:text-2xl">結果分析</p>
+        <p
+          class="m-0 py-3 md:py-4 px-4 md:px-6 text-left text-[#f1ecff] text-xl md:text-2xl"
+        >
+          結果分析
+        </p>
       </div>
 
       <hr class="border-t-2 border-gray-300" />
@@ -18,12 +24,16 @@
             :key="gridIndex"
             class="flex flex-row justify-between w-full max-w-[400px] my-2 md:my-2.5 mx-2 md:mx-2.5 gap-2"
           >
-            <div class="flex-1 p-2 md:p-2.5 text-center rounded bg-[#6b5276] text-[#dad8eb]">
+            <div
+              class="flex-1 p-2 md:p-2.5 text-center rounded bg-[#6b5276] text-[#dad8eb]"
+            >
               {{ gridItem.title }}
             </div>
             <div
               class="flex-1 p-2 md:p-2.5 text-white text-center rounded"
-              :class="gridItem.value === 'risky' ? 'bg-[#C8698A]' : 'bg-[#5bc259]'"
+              :class="
+                gridItem.value === 'risky' ? 'bg-[#C8698A]' : 'bg-[#5bc259]'
+              "
             >
               {{ gridItem.value === 'risky' ? '可疑內容' : '尚未發現風險' }}
             </div>
@@ -66,22 +76,26 @@ const shareId = ref('')
 const initializeGridData = () => {
   const storedData = JSON.parse(localStorage.getItem('apiResponseData'))
   const checkList = storedData?.checkList
-  
+
   if (!storedData || !Array.isArray(checkList)) {
     alert('尚未完成檢測，前往上傳影片頁面。')
     router.push('/')
     return false
   }
 
-  gridItems.value = checkList.map(item => ({
+  gridItems.value = checkList.map((item) => ({
     title: item.name,
     value: item.result === 'risky' ? 'risky' : 'pass'
   }))
 
   // 設置分享文字
-  const riskyService = gridItems.value?.filter(item => item.value === 'risky').map(item => `「${item.title}」`)
+  const riskyService = gridItems.value
+    ?.filter((item) => item.value === 'risky')
+    .map((item) => `「${item.title}」`)
   if (riskyService.length > 0) {
-    detailsText.value = `要小心！我在魔聲仔中的${riskyService.join('、')}中檢測到可疑內容，建議大家小心使用。`
+    detailsText.value = `要小心！我在魔聲仔中的${riskyService.join(
+      '、'
+    )}中檢測到可疑內容，建議大家小心使用。`
   }
   shareId.value = storedData.id
   return true
@@ -89,21 +103,26 @@ const initializeGridData = () => {
 
 const createDoughnutChart = () => {
   const ctx = document.getElementById('myChart').getContext('2d')
-  const results = gridItems.value.reduce((acc, item) => {
-    acc[item.value]++
-    return acc
-  }, { pass: 0, risky: 0 })
+  const results = gridItems.value.reduce(
+    (acc, item) => {
+      acc[item.value]++
+      return acc
+    },
+    { pass: 0, risky: 0 }
+  )
 
   new Chart(ctx, {
     type: 'doughnut',
     data: {
-      datasets: [{
-        label: '檢測結果',
-        data: [results.pass, results.risky],
-        backgroundColor: ['#5bc259', '#C8698A'],
-        borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 0.2
-      }]
+      datasets: [
+        {
+          label: '檢測結果',
+          data: [results.pass, results.risky],
+          backgroundColor: ['#5bc259', '#C8698A'],
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 0.2
+        }
+      ]
     },
     options: {
       responsive: true,
@@ -122,7 +141,9 @@ const closePopupshare = () => {
 
 const shareToThreads = () => {
   const context = detailsText.value
-  const url = `魔聲仔檢測結果：\n${import.meta.env.VITE_FRONTEND_HOST}/UserHistory?id=${shareId.value}`
+  const url = `魔聲仔檢測結果：\n${
+    import.meta.env.VITE_FRONTEND_HOST
+  }/UserHistory?id=${shareId.value}`
   const tag = '#魔聲仔'
   const shareUrl = `https://threads.net/intent/post?text=${encodeURIComponent(
     `${context}\n\n${url}\n${tag}`

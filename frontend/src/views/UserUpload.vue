@@ -19,7 +19,9 @@
             type="url"
             class="flex-1 rounded-[10px] border-none bg-[rgba(255,255,255,0.729)] p-3 text-base outline-none shadow-[0_-2px_10px_rgba(0,0,0,0.1)]"
           />
-          <button class="btn w-full sm:w-auto" @click="handleUrlSubmit">點擊送出</button>
+          <button class="btn w-full sm:w-auto" @click="handleUrlSubmit">
+            點擊送出
+          </button>
         </div>
 
         <!-- File Upload Section -->
@@ -144,6 +146,7 @@ const postData = async (videoData) => {
     alert('上傳失敗，請稍後再試')
   } finally {
     isLoading.value = false
+    router.go(0)
   }
 }
 

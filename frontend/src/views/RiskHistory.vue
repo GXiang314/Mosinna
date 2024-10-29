@@ -5,46 +5,49 @@
     >
       <!-- Title Section -->
       <div class="text-center p-4">
-        <p class="text-white text-xl">歷史紀錄</p>
+        <p class="text-white text-xl">風險檢測記錄</p>
       </div>
 
       <hr class="border-t-2 border-gray-300 mx-4" />
 
       <!-- Main Content -->
       <div class="flex-1 flex flex-col justify-between p-4">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <div
-            v-for="(item, index) in paginatedItems"
-            :key="index"
-            class="relative group"
-          >
-            <!-- Container with aspect ratio -->
-            <div class="relative w-full pt-[75%]">
-              <!-- Background Card -->
-              <div class="absolute inset-0 bg-[#f1ecff] rounded-lg"></div>
-
-              <!-- Content Card -->
-              <div
-                class="absolute inset-0 bg-white rounded-lg shadow-md overflow-hidden transform translate-x-2 translate-y-2 transition-transform"
+        <div class="bg-white rounded-lg shadow-md p-4">
+          <table class="w-full">
+            <thead>
+              <tr class="bg-gray-100">
+                <th class="py-2 px-4 text-left">檢測來源</th>
+                <th class="py-2 px-4 text-left">檢測時間</th>
+                <th class="py-2 px-4 text-center">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="(item, index) in paginatedItems"
+                :key="index"
+                class="border-b"
               >
-                <div class="absolute inset-0">
-                  <video
-                    v-if="item.videoUrl"
-                    :src="item.videoUrl"
-                    controls
-                    class="w-full h-full object-cover rounded"
-                  ></video>
-
+                <td class="py-2 px-4">{{ item.source || '使用者上傳' }}</td>
+                <td class="py-2 px-4">
+                  {{ new Date(item.checkedAt).toLocaleString() }}
+                </td>
+                <td class="py-2 px-4 text-center flex gap-2 justify-center">
                   <button
-                    @click="showPopup(item)"
-                    class="absolute top-2 right-2 transition-transform hover:scale-105"
+                    @click="showDetails(item)"
+                    class="px-4 py-1.5 bg-[#6b5276] text-white rounded hover:bg-[#574460] transition-colors"
                   >
-                    <img src="/search.png" class="w-16 sm:w-20" alt="Search" />
+                    詳細記錄
                   </button>
-                </div>
-              </div>
-            </div>
-          </div>
+                  <button
+                    @click="handleReport(item)"
+                    class="px-4 py-1.5 bg-orange-400 text-white rounded hover:bg-orange-300 transition-colors"
+                  >
+                    通報
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
         <!-- Pagination -->
@@ -102,7 +105,7 @@
           class="bg-white rounded-lg p-4 sm:p-6 w-[95%] sm:w-11/12 max-w-2xl mx-2 sm:mx-auto max-h-[90vh] overflow-y-auto"
         >
           <div class="flex justify-between items-center mb-2 sm:mb-4">
-            <h2 class="text-lg sm:text-xl font-semibold">歷史分析</h2>
+            <h2 class="text-lg sm:text-xl font-semibold">檢測結果</h2>
             <button
               @click="closePopup"
               class="text-gray-500 hover:text-gray-700 text-xl sm:text-2xl"
@@ -154,25 +157,8 @@
               ></video>
             </div>
           </div>
-
-          <div class="text-center mt-4 sm:mt-6">
-            <button
-              @click="showPopupshare"
-              class="px-4 sm:px-6 py-1.5 sm:py-2 bg-pink-500 text-white text-sm sm:text-base rounded hover:bg-pink-400 transition-colors"
-            >
-              分享
-            </button>
-          </div>
         </div>
       </div>
-
-      <!-- ShareResult Component -->
-      <ShareResult
-        v-if="showModalshare"
-        :details-text="detailsText"
-        @close="closePopupshare"
-        @share-to-threads="shareToThreads"
-      />
     </div>
   </div>
 </template>
@@ -181,21 +167,19 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import Chart from 'chart.js/auto'
-import ShareResult from '../components/ShareResult.vue'
 
 // State
 const items = ref([])
 const gridItems = ref([])
 const showModal = ref(false)
 const currentItem = ref(null)
-const showModalshare = ref(false)
-const detailsText = ref('')
 const errorMessage = ref('')
 const currentPage = ref(1)
 const route = useRoute()
+const router = useRouter()
 
 // Constants
-const ITEMS_PER_PAGE = 6
+const ITEMS_PER_PAGE = 10
 const API_URL = `${import.meta.env.VITE_BACKEND_HOST}/api/history`
 
 // Computed
@@ -218,40 +202,53 @@ const changePage = (page) => {
   }
 }
 
+const handleReport = (item) => {
+  const textService = item.services.find((s) => s.name === '文字詐騙檢測服務')
+  const riskyServices = item.services
+    .filter((s) => s.result === 'risky')
+    .map((s) => `「${s.name}」`)
+    .join('、')
+
+  const reportText =
+    `影片來源：${item.source || '使用者上傳'}\n` +
+    `影片語音內容：${textService?.details?.text || ''}\n` +
+    `已檢測到風險：${riskyServices}\n\n` +
+    `檢測來源：魔聲仔－影片檢測平台 ${
+      import.meta.env.VITE_FRONTEND_HOST
+    }/UserHistory?id=${item.id}`
+
+  localStorage.setItem('reportText', reportText)
+  router.push('/Notification')
+}
+
 const fetchHistory = async () => {
   try {
     const response = await fetch(API_URL)
     if (!response.ok) throw new Error(`HTTP Error: ${response.status}`)
 
     const { data: storedData, status, message } = await response.json()
+    if (!storedData || storedData?.length === 0) {
+      errorMessage.value = '沒有檢測記錄'
+      return
+    }
+    const filteredData = storedData
+      .filter((item) =>
+        item.services.some((service) => service.result === 'risky')
+      )
+      .sort((a, b) => new Date(b.checked_at) - new Date(a.checked_at))
 
-    if (Array.isArray(storedData)) {
-      items.value = storedData.map((item) => ({
+    if (Array.isArray(filteredData)) {
+      items.value = filteredData.map((item) => ({
         id: item.id,
-        videoUrl: item.video_path || '',
-        name: `影片ID: ${item.id}`,
+        source: item.source || '使用者上傳',
         services: item.services.map((service) => ({
           name: service.name || '未知服務',
           result: service.result || '未知',
           details: JSON.parse(service.details || '{}')
         })),
-        checkedAt: item.checked_at || ''
+        checkedAt: item.checked_at || '',
+        videoUrl: item.video_path || ''
       }))
-
-      const firstServiceWithConfidence = storedData
-        .flatMap((item) => item.services)
-        .find((service) => service.details?.confidence)
-
-      if (firstServiceWithConfidence) {
-        detailsText.value = `服務: ${firstServiceWithConfidence.name}, 信心度: ${firstServiceWithConfidence.details.confidence}`
-      }
-
-      // 檢查 URL 中是否有 id 參數
-      const historyId = route.query.id
-      if (historyId) {
-        const item = items.value.find((video) => video.id === historyId)
-        if (item) showPopup(item)
-      }
     }
   } catch (error) {
     console.error('Fetch Error:', error)
@@ -259,22 +256,13 @@ const fetchHistory = async () => {
   }
 }
 
-const showPopup = (item) => {
+const showDetails = (item) => {
   currentItem.value = item
   showModal.value = true
   gridItems.value = item.services.map((service) => ({
     title: service.name,
     value: service.result === 'risky' ? 'risky' : 'pass'
   }))
-  // 設置分享文字
-  const riskyService = gridItems.value
-    ?.filter((item) => item.value === 'risky')
-    .map((item) => `「${item.title}」`)
-  if (riskyService.length > 0) {
-    detailsText.value = `要小心！我在魔聲仔中的${riskyService.join(
-      '、'
-    )}中檢測到可疑內容，建議大家小心使用。`
-  }
   setTimeout(renderChart, 300)
 }
 
@@ -309,19 +297,6 @@ const renderChart = () => {
   })
 }
 
-const shareToThreads = () => {
-  const context = detailsText.value
-  const shareId = currentItem.value?.id
-  const url = `魔聲仔檢測結果：\n${
-    import.meta.env.VITE_FRONTEND_HOST
-  }/UserHistory?id=${shareId}`
-  const tag = '#魔聲仔'
-  const shareUrl = `https://threads.net/intent/post?text=${encodeURIComponent(
-    `${context}\n\n${url}\n${tag}`
-  )}`
-  window.open(shareUrl, '_blank')
-}
-
 // Lifecycle
 onMounted(() => {
   fetchHistory()
@@ -329,13 +304,5 @@ onMounted(() => {
 
 const closePopup = () => {
   showModal.value = false
-}
-
-const showPopupshare = () => {
-  showModalshare.value = true
-}
-
-const closePopupshare = () => {
-  showModalshare.value = false
 }
 </script>
