@@ -76,6 +76,7 @@ export class CheckController {
             if (
                 !checkUrl ||
                 (!checkUrl.startsWith('https://www.youtube.com/watch') &&
+                    !checkUrl.startsWith('https://youtube.com/') &&
                     !checkUrl.startsWith('https://youtu.be/'))
             ) {
                 throw new Error('只接受 YouTube 影片連結')
