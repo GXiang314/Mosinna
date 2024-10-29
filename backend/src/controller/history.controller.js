@@ -61,6 +61,8 @@ function toCheckHistoryPresenter(params) {
     return Object.keys(grouped).map((videoId) => {
         return {
             id: videoId,
+            source: grouped[videoId][0].source,
+            // ip: grouped[videoId][0].ip,
             video_path: `${resourceHost}/${grouped[videoId][0].video?.video_path}`,
             services: grouped[videoId].map((history) => {
                 return {

@@ -39,6 +39,8 @@ export class CheckController {
             // store check result
             await this.checkService.saveCheckResult({
                 video_id: video?.id,
+                source: '使用者上傳',
+                ip: req.ip,
                 checkResult: result.map((x) => {
                     return {
                         service_id: x.id,
@@ -92,6 +94,8 @@ export class CheckController {
             // store check result
             await this.checkService.saveCheckResult({
                 video_id: video?.id,
+                source: 'Youtube',
+                ip: req.ip,
                 checkResult: result.map((x) => {
                     return {
                         service_id: x.id,
