@@ -3,6 +3,7 @@ import Home from '@/views/UserUpload.vue'
 import Report from '@/views/UserReport.vue'
 import History from '@/views/UserHistory.vue'
 import Notifi from '@/views/BackNotification.vue'
+import RiskHistory from '@/views/RiskHistory.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -12,7 +13,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/UserReport',
-    name: '結果分析', 
+    name: '結果分析',
     component: Report
   },
   {
@@ -24,6 +25,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/Notification',
     name: '檢舉通報',
     component: Notifi
+  },
+  {
+    path: '/RiskHistory',
+    name: '風險檢測記錄',
+    component: RiskHistory
   },
   {
     path: '/:pathMatch(.*)*',

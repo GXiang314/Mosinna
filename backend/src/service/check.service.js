@@ -56,7 +56,7 @@ export class CheckService {
      * @property {string} result
      * @property {string} details
      *
-     * @param {{checkResult: checkResult[], video_id: string }} result
+     * @param {{checkResult: checkResult[], video_id: string, source: string, ip: string }} result
      */
     async saveCheckResult(result) {
         return await this.checkResultRepository.saveCheckResult(result)

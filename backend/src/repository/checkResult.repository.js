@@ -17,6 +17,8 @@ export class CheckResultRepository {
                 return {
                     ...x,
                     video_id: result.video_id,
+                    source: result.source,
+                    ip: result.ip,
                     details: JSON.stringify(x.details),
                 }
             }),

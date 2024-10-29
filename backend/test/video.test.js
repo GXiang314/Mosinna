@@ -71,6 +71,7 @@ describe(`驗收測試 - 影片檢測API`, () => {
         expect(data).toEqual(
             expect.objectContaining({
                 id: expect.any(String),
+                source: '使用者上傳',
                 video_path: expect.stringContaining(process.env.RESOURCES_PATH),
                 services: expect.arrayContaining([
                     expect.objectContaining({
@@ -140,6 +141,7 @@ describe(`驗收測試 - youtube 影片上傳檢測 API`, () => {
         expect(data).toEqual(
             expect.objectContaining({
                 id: expect.any(String),
+                source: 'Youtube',
                 video_path: expect.stringContaining(process.env.RESOURCES_PATH),
                 services: expect.arrayContaining([
                     expect.objectContaining({

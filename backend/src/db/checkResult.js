@@ -43,6 +43,14 @@ export default (sequelize) => {
                     key: 'id',
                 },
             },
+            source: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            ip: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
             result: {
                 type: DataTypes.TEXT('long'),
                 allowNull: false,

@@ -1,6 +1,10 @@
 <template>
-  <div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 px-4 sm:px-0">
-    <div class="bg-[#f1ecff] rounded-lg p-4 sm:p-6 w-full sm:w-4/5 lg:w-3/5 h-[90vh] sm:h-4/5">
+  <div
+    class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 px-4 sm:px-0"
+  >
+    <div
+      class="bg-[#f1ecff] rounded-lg p-4 sm:p-6 w-full sm:w-4/5 lg:w-3/5 h-[90vh] sm:h-4/5"
+    >
       <div class="flex justify-between items-center mb-2 sm:mb-4">
         <h3 class="text-lg sm:text-xl font-semibold">建立貼文</h3>
         <button
@@ -32,17 +36,29 @@
             target="_blank"
             class="hover:opacity-80"
           >
-            <img src="/social.png" alt="Instagram" class="w-6 h-6 sm:w-8 sm:h-8" />
+            <img
+              src="/social.png"
+              alt="Instagram"
+              class="w-6 h-6 sm:w-8 sm:h-8"
+            />
           </a>
           <a
             href="https://www.facebook.com/"
             target="_blank"
             class="hover:opacity-80"
           >
-            <img src="/facebook.png" alt="Facebook" class="w-6 h-6 sm:w-8 sm:h-8" />
+            <img
+              src="/facebook.png"
+              alt="Facebook"
+              class="w-6 h-6 sm:w-8 sm:h-8"
+            />
           </a>
           <button @click="$emit('share-to-threads')" class="hover:opacity-80">
-            <img src="/threads.png" alt="Threads" class="w-6 h-6 sm:w-8 sm:h-8" />
+            <img
+              src="/threads.png"
+              alt="Threads"
+              class="w-6 h-6 sm:w-8 sm:h-8"
+            />
           </button>
         </div>
       </div>

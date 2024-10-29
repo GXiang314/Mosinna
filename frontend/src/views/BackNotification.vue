@@ -1,64 +1,82 @@
 <template>
   <form>
     <div class="flex flex-col justify-start items-center h-[90vh] mt-2.5">
-      <div class="bg-[hsla(256,100%,96%,0.9)] rounded-lg w-4/5 max-w-[900px] mb-5 shadow-[15px_15px_15px_rgba(0,0,0,0.1)]">
-        <div class="m-0 py-2 px-2 text-left text-[#765273] text-xl rounded-t-lg">
+      <div
+        class="bg-[hsla(256,100%,96%,0.9)] rounded-lg w-4/5 max-w-[900px] mb-5 shadow-[15px_15px_15px_rgba(0,0,0,0.1)]"
+      >
+        <div
+          class="m-0 py-2 px-2 text-left text-[#765273] text-xl rounded-t-lg"
+        >
           <p>基本資料</p>
         </div>
         <div class="flex flex-col md:flex-row p-2.5">
           <div class="flex flex-col items-start p-2.5">
-            <label class="pb-1.5"><span class="text-[#c8698a]">*</span>姓名</label>
-            <input 
+            <label class="pb-1.5"
+              ><span class="text-[#c8698a]">*</span>姓名</label
+            >
+            <input
               v-model="formData.name"
-              type="text" 
+              type="text"
               class="rounded border-l-8 border-l-[#e7c1ce] h-[30px] p-1.5"
-              required 
+              required
             />
           </div>
           <div class="flex flex-col items-start p-2.5">
-            <label class="pb-1.5"><span class="text-[#c8698a]">*</span>聯絡電話</label>
-            <input 
+            <label class="pb-1.5"
+              ><span class="text-[#c8698a]">*</span>聯絡電話</label
+            >
+            <input
               v-model="formData.phone"
-              type="text" 
+              type="text"
               class="rounded border-l-8 border-[#e7c1ce] h-[30px] p-1.5"
-              required 
+              required
             />
           </div>
         </div>
       </div>
 
-      <div class="bg-[hsla(256,100%,96%,0.9)] rounded-lg w-4/5 max-w-[900px] mb-5 shadow-[15px_15px_15px_rgba(0,0,0,0.1)]">
-        <div class="m-0 py-[15px] px-[10px] text-left text-[#765273] text-xl rounded-t-lg">
+      <div
+        class="bg-[hsla(256,100%,96%,0.9)] rounded-lg w-4/5 max-w-[900px] mb-5 shadow-[15px_15px_15px_rgba(0,0,0,0.1)]"
+      >
+        <div
+          class="m-0 py-[15px] px-[10px] text-left text-[#765273] text-xl rounded-t-lg"
+        >
           <p>案情資料</p>
         </div>
         <div class="flex flex-col p-2.5 items-start">
           <fieldset class="border-none rounded">
-            <legend class="inline-block rounded text-[#c8698a]">是否已受騙</legend>
+            <legend class="inline-block rounded text-[#c8698a]">
+              是否已受騙
+            </legend>
             <div class="mt-2">
-              <input 
+              <input
                 v-model="formData.isScammed"
-                type="radio" 
-                id="yes" 
-                name="scammed" 
+                type="radio"
+                id="yes"
+                name="scammed"
                 value="yes"
-                class="mr-2" 
+                class="mr-2"
               />
               <label for="yes" class="mr-4">是</label>
-              <input 
+              <input
                 v-model="formData.isScammed"
-                type="radio" 
-                id="no" 
-                name="scammed" 
+                type="radio"
+                id="no"
+                name="scammed"
                 value="no"
-                class="mr-2" 
+                class="mr-2"
               />
               <label for="no">否</label>
             </div>
           </fieldset>
 
           <fieldset class="border-none rounded mt-4">
-            <legend class="inline-block rounded text-[#c8698a]">詐騙管道</legend>
-            <div class="flex flex-wrap justify-start gap-px max-w-full md:max-w-[900px] mt-2">
+            <legend class="inline-block rounded text-[#c8698a]">
+              詐騙管道
+            </legend>
+            <div
+              class="flex flex-wrap justify-start gap-px max-w-full md:max-w-[900px] mt-2"
+            >
               <div
                 v-for="source in fraudSources"
                 :key="source.id"
@@ -78,8 +96,12 @@
           </fieldset>
 
           <fieldset class="border-none rounded mt-4">
-            <legend class="inline-block rounded text-[#c8698a]">詐騙手法</legend>
-            <div class="flex flex-wrap justify-start gap-px max-w-full md:max-w-[900px] mt-2">
+            <legend class="inline-block rounded text-[#c8698a]">
+              詐騙手法
+            </legend>
+            <div
+              class="flex flex-wrap justify-start gap-px max-w-full md:max-w-[900px] mt-2"
+            >
               <div
                 v-for="type in fraudTypes"
                 :key="type.id"
@@ -100,12 +122,16 @@
         </div>
       </div>
 
-      <div class="bg-[hsla(256,100%,96%,0.9)] rounded-lg w-4/5 max-w-[900px] mb-5 shadow-[15px_15px_15px_rgba(0,0,0,0.1)]">
-        <div class="m-0 py-[15px] px-[10px] text-left text-[#765273] text-xl rounded-t-lg">
+      <div
+        class="bg-[hsla(256,100%,96%,0.9)] rounded-lg w-4/5 max-w-[900px] mb-5 shadow-[15px_15px_15px_rgba(0,0,0,0.1)]"
+      >
+        <div
+          class="m-0 py-[15px] px-[10px] text-left text-[#765273] text-xl rounded-t-lg"
+        >
           <p>註解說明(限輸入500個字)</p>
         </div>
         <div class="flex flex-col p-2.5">
-          <textarea 
+          <textarea
             v-model="formData.comment"
             maxlength="500"
             class="rounded border-none border-l-8 border-[#e7c1ce] h-[150px] w-[95%] p-1.5"
@@ -115,7 +141,7 @@
       </div>
 
       <div class="form-btn">
-        <button 
+        <button
           @click.prevent="handleSubmit"
           class="bg-[#c8698a] border-none shadow-[-2px_0_5px_rgba(0,0,0,0.5)] m-[5px] text-white text-[15px] px-[15px] py-[5px] rounded cursor-pointer hover:bg-[#ac355f]"
         >
@@ -146,15 +172,15 @@ const formData = ref({
 
 const fetchData = async (endpoint) => {
   const url = `${import.meta.env.VITE_BACKEND_HOST}/api/list/${endpoint}`
-  
+
   try {
     const response = await fetch(url)
     if (!response.ok) {
       throw new Error(`HTTP 錯誤！狀態：${response.status}`)
     }
-    
+
     const { status, data, message } = await response.json()
-    
+
     if (status === 200) {
       return data
     } else {
@@ -185,5 +211,10 @@ const handleSubmit = async () => {
 onMounted(async () => {
   fraudSources.value = await fetchData('fraudSources')
   fraudTypes.value = await fetchData('fraudTypes')
+  const reportText = localStorage.getItem('reportText')
+  if (reportText) {
+    formData.value.comment = reportText
+    localStorage.removeItem('reportText')
+  }
 })
 </script>
