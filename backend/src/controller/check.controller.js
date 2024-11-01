@@ -75,7 +75,7 @@ export class CheckController {
             const { checkUrl } = req.body
             if (
                 !checkUrl ||
-                (!checkUrl.startsWith('https://www.youtube.com/watch') &&
+                (!checkUrl.startsWith('https://www.youtube.com/') &&
                     !checkUrl.startsWith('https://youtube.com/') &&
                     !checkUrl.startsWith('https://youtu.be/'))
             ) {
@@ -118,7 +118,10 @@ export class CheckController {
             )
         } catch (error) {
             console.log(error)
-            if (error.message === '只接受 YouTube 影片連結') {
+            if (
+                error.message === '只接受 YouTube 影片連結' ||
+                error.message === '檔案過大或此影片已下架'
+            ) {
                 return res
                     .status(400)
                     .json(apiFormatter(null, 400, error.message))

@@ -38,6 +38,8 @@ export class CheckResultRepository {
                         as: 'service',
                     },
                 ],
+                order: [['checked_at', 'DESC']],
+                // limit: 150,
             })
         ).map((el) => el.get({ plain: true }))
     }
