@@ -53,7 +53,8 @@
       <!-- ShareResult Component -->
       <ShareResult
         v-if="showModalshare"
-        :details-text="detailsText"
+        v-model:detailsText="detailsText"
+        v-model:hashtags="hashtags"
         @close="closePopupshare"
         @share-to-threads="shareToThreads"
       />
@@ -71,6 +72,7 @@ const gridItems = ref([])
 const router = useRouter()
 const showModalshare = ref(false)
 const detailsText = ref('')
+const hashtags = ref('#魔聲仔')
 const shareId = ref('')
 
 const initializeGridData = () => {
@@ -144,7 +146,7 @@ const shareToThreads = () => {
   const url = `魔聲仔檢測結果：\n${
     import.meta.env.VITE_FRONTEND_HOST
   }/UserHistory?id=${shareId.value}`
-  const tag = '#魔聲仔'
+  const tag = hashtags.value ? `\n${hashtags.value}` : ''
   const shareUrl = `https://threads.net/intent/post?text=${encodeURIComponent(
     `${context}\n\n${url}\n${tag}`
   )}`

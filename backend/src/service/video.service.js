@@ -27,8 +27,10 @@ export class VideoService {
         })
         if (!url2VideoService)
             throw new Error('無可用的 URL 解析服務，請聯絡系統管理員')
-        return (await axios.get(`${url2VideoService.host}?url=${url}`)).data
-            ?.result
+        const result = (await axios.get(`${url2VideoService.host}?url=${url}`))
+            .data?.result
+        if (!result) throw new Error('檔案過大或此影片已下架')
+        return result
     }
 }
 export default new VideoService()

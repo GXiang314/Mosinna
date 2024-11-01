@@ -48,27 +48,27 @@
         </div>
 
         <!-- Pagination -->
-        <div class="flex justify-center gap-2 mt-4">
+        <div class="flex justify-center gap-1 mt-4">
           <button
             @click="changePage(1)"
             :disabled="currentPage === 1"
-            class="px-3 py-2 rounded bg-gray-200 text-stone-900 disabled:opacity-50 hover:bg-gray-50 transition-colors"
+            class="px-2 py-1.5 text-sm rounded bg-gray-200 text-stone-900 disabled:opacity-50 hover:bg-gray-50 transition-colors"
           >
             &lt;&lt;
           </button>
           <button
             @click="changePage(currentPage - 1)"
             :disabled="currentPage === 1"
-            class="px-3 py-2 rounded bg-gray-200 text-stone-900 disabled:opacity-50 hover:bg-gray-50 transition-colors"
+            class="px-2 py-1.5 text-sm rounded bg-gray-200 text-stone-900 disabled:opacity-50 hover:bg-gray-50 transition-colors"
           >
             &lt;
           </button>
           <button
-            v-for="page in pages"
+            v-for="page in displayedPages"
             :key="page"
             @click="changePage(page)"
             :class="[
-              'px-3 py-2 rounded transition-colors',
+              'px-2 py-1.5 text-sm rounded transition-colors',
               currentPage === page
                 ? 'bg-gray-50 text-stone-900'
                 : 'bg-gray-200 text-stone-900 hover:bg-gray-100'
@@ -79,14 +79,14 @@
           <button
             @click="changePage(currentPage + 1)"
             :disabled="currentPage === totalPages"
-            class="px-3 py-2 rounded bg-gray-200 text-stone-900 disabled:opacity-50 hover:bg-gray-50 transition-colors"
+            class="px-2 py-1.5 text-sm rounded bg-gray-200 text-stone-900 disabled:opacity-50 hover:bg-gray-50 transition-colors"
           >
             &gt;
           </button>
           <button
             @click="changePage(totalPages)"
             :disabled="currentPage === totalPages"
-            class="px-3 py-2 rounded bg-gray-200 text-stone-900 disabled:opacity-50 hover:bg-gray-50 transition-colors"
+            class="px-2 py-1.5 text-sm rounded bg-gray-200 text-stone-900 disabled:opacity-50 hover:bg-gray-50 transition-colors"
           >
             &gt;&gt;
           </button>
@@ -169,7 +169,7 @@
       <!-- ShareResult Component -->
       <ShareResult
         v-if="showModalshare"
-        :details-text="detailsText"
+        v-model:detailsText="detailsText"
         @close="closePopupshare"
         @share-to-threads="shareToThreads"
       />
@@ -207,9 +207,22 @@ const paginatedItems = computed(() => {
   const end = start + ITEMS_PER_PAGE
   return items.value.slice(start, end)
 })
-const pages = computed(() =>
-  Array.from({ length: totalPages.value }, (_, i) => i + 1)
-)
+
+const displayedPages = computed(() => {
+  const maxButtons = 5
+  const halfButtons = Math.floor(maxButtons / 2)
+  let startPage = Math.max(currentPage.value - halfButtons, 1)
+  let endPage = Math.min(startPage + maxButtons - 1, totalPages.value)
+
+  if (endPage - startPage + 1 < maxButtons) {
+    startPage = Math.max(endPage - maxButtons + 1, 1)
+  }
+
+  return Array.from(
+    { length: Math.min(maxButtons, endPage - startPage + 1) },
+    (_, i) => startPage + i
+  )
+})
 
 // Methods
 const changePage = (page) => {
