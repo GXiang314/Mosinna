@@ -136,7 +136,7 @@ describe(`驗收測試 - youtube 影片上傳檢測 API`, () => {
         // when
         const history = await request(app).get('/api/history')
         // then
-        const data = history.body.data?.[1]
+        const data = history.body.data?.[0]
         expect(data.services.length).toBe(2)
         expect(data).toEqual(
             expect.objectContaining({
