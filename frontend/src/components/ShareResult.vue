@@ -23,7 +23,8 @@
         ></textarea>
         <input
           type="text"
-          value="#魔聲仔"
+          :value="hashtags"
+          @input="$emit('update:hashtags', $event.target.value)"
           class="w-full p-2 text-sm sm:text-base rounded border border-gray-300"
         />
       </div>
@@ -73,8 +74,16 @@ defineProps({
   detailsText: {
     type: String,
     required: true
+  },
+  hashtags: {
+    type: String,
+    required: false
   }
 })
-
-defineEmits(['close', 'share-to-threads', 'update:detailsText'])
+defineEmits([
+  'close',
+  'share-to-threads',
+  'update:detailsText',
+  'update:hashtags'
+])
 </script>
