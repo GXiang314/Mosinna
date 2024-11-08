@@ -30,11 +30,12 @@
                 <div class="absolute inset-0">
                   <video
                     v-if="item.videoUrl"
-                    :src="item.videoUrl"
                     controls
                     class="w-full h-full object-cover rounded"
                     playsinline
-                  ></video>
+                  >
+                    <source :src="item.videoUrl" type="video/mp4" />
+                  </video>
 
                   <button
                     @click="showPopup(item)"
