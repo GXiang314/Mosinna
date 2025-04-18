@@ -17,7 +17,18 @@
         <div class="relative w-full h-[150px] md:h-[200px]">
           <canvas id="myChart"></canvas>
         </div>
-
+        <div
+          class="relative w-[200px] h-[150px] md:h-[260px] bg-[#D1C4E9] rounded-lg flex justify-center items-start"
+        >
+          <span class="text-8xl m-4">😊</span>
+          <div
+            class="absolute bottom-0 w-[200px] h-[130px] md:h-[150px] bg-[#9575CD] rounded-lg flex flex-col justify-center items-center p-4"
+          >
+            <div class="text-[#e9e0f3] rounded-lg p-2">音訊偽造</div>
+            <div class="text-[#a6f5d4] rounded-lg p-2">尚未發現風險</div>
+            <div class="text-[#6200EA] rounded-lg p-2">ℹ️</div>
+          </div>
+        </div>
         <div class="w-full flex flex-col items-center">
           <div
             v-for="(gridItem, gridIndex) in gridItems"
@@ -78,13 +89,6 @@ const shareId = ref('')
 const initializeGridData = () => {
   const storedData = JSON.parse(localStorage.getItem('apiResponseData'))
   const checkList = storedData?.checkList
-
-  if (!storedData || !Array.isArray(checkList)) {
-    alert('尚未完成檢測，前往上傳影片頁面。')
-    router.push('/')
-    return false
-  }
-
   gridItems.value = checkList.map((item) => ({
     title: item.name,
     value: item.result === 'risky' ? 'risky' : 'pass'
