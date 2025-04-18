@@ -19,7 +19,14 @@ app.use(
 )
 app.use(cors())
 app.use(express.json({ limit: '50mb' }))
-app.use('/resources', express.static(path.resolve(__dirname, '..', 'videos')))
+app.use(
+    '/resources',
+    express.static(path.resolve(__dirname, '..', 'videos'), {
+        setHeaders: (res) => {
+            res.setHeader('Content-Type', 'video/mp4')
+        },
+    }),
+)
 
 app.get('/', (req, res) => {
     res.json({
