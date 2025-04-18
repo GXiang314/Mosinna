@@ -18,9 +18,13 @@ export class ServiceRepository {
     }
 
     async getServices() {
-        return await Service.findAll()
+        return (await Service.findAll()).map((x) => x.dataValues)
     }
 
+    /**
+     *
+     * @returns {Promise<import("../db/service").Service[]>}
+     */
     async getAllAvaliableServices() {
         return (
             await Service.findAll({

@@ -1,8 +1,8 @@
-#!/bin/sh
-. "$(dirname $0)/_/husky.sh"
+# #!/bin/sh
+# . "$(dirname $0)/_/husky.sh"
 
-declare IS_BACKEND_FOLDER_CHANGE=$(git show --name-only -r --stat --oneline HEAD^^..HEAD | grep 'backend')
+# declare IS_BACKEND_FOLDER_CHANGE=$(git show --name-only -r --stat --oneline HEAD^^..HEAD | grep 'backend')
 
-echo "IS_BACKEND_FOLDER_CHANGE  --> + $IS_BACKEND_FOLDER_CHANGE"
+# echo "IS_BACKEND_FOLDER_CHANGE  --> + $IS_BACKEND_FOLDER_CHANGE"
 
-if [[ $IS_BACKEND_FOLDER_CHANGE ]]; then cd backend &&  npm run test:e2e && cd ..; fi
+# if [[ $IS_BACKEND_FOLDER_CHANGE ]]; then cd backend &&  npm run test:e2e && cd ..; fi

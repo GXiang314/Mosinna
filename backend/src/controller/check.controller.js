@@ -28,7 +28,22 @@ export class CheckController {
     async uploadVideo(req, res) {
         try {
             // proxy to ai detection services
-            const { videoData } = req.body
+            const { videoData } = JSON.parse(req.body)
+            if (process.env.SSE_TEST === 'true') {
+                res.writeHead(200, {
+                    'Content-Type': 'text/event-stream',
+                    'Cache-Control': 'no-cache',
+                    'X-Accel-Buffering': 'no',
+                })
+
+                req.on('close', () => {
+                    console.log('Client disconnected')
+                })
+                await this.checkService.proxyToCheckServiceSSE(res, {
+                    videoData,
+                })
+                return
+            }
             const result = await this.checkService.proxyToCheckService({
                 videoData,
             })
@@ -82,6 +97,21 @@ export class CheckController {
                 throw new Error('只接受 YouTube 影片連結')
             }
 
+            if (process.env.SSE_TEST === 'true') {
+                res.writeHead(200, {
+                    'Content-Type': 'text/event-stream',
+                    'Cache-Control': 'no-cache',
+                    'X-Accel-Buffering': 'no',
+                })
+                console.log('SSE TEST')
+                await this.checkService.proxyToCheckServiceSSE(res, {
+                    videoData: 'any',
+                })
+                req.on('close', () => {
+                    console.log('Client disconnected')
+                })
+                return
+            }
             const videoData = await this.videoService.getVideoData(checkUrl)
 
             // proxy to ai detection services

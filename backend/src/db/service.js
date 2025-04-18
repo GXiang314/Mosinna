@@ -1,5 +1,9 @@
 import { Model, DataTypes } from 'sequelize'
 
+/**
+ * @typedef {import('sequelize').Model} Model
+ * @typedef {import('sequelize').DataTypes} DataTypes
+ */
 export class Service extends Model {
     /**
      * @type {string}
