@@ -82,17 +82,17 @@ export class CheckController {
     }
 
     /**
-     * @param {import("express").Request<unknown, unknown, {checkUrl: string}>} req
+     * @param {import("express").Request<unknown, unknown, {url: string}>} req
      * @param {import("express").Response} res
      */
     async uploadUrl(req, res) {
         try {
-            const { checkUrl } = req.body
+            const { url } = req.body
             if (
-                !checkUrl ||
-                (!checkUrl.startsWith('https://www.youtube.com/') &&
-                    !checkUrl.startsWith('https://youtube.com/') &&
-                    !checkUrl.startsWith('https://youtu.be/'))
+                !url ||
+                (!url.startsWith('https://www.youtube.com/') &&
+                    !url.startsWith('https://youtube.com/') &&
+                    !url.startsWith('https://youtu.be/'))
             ) {
                 throw new Error('只接受 YouTube 影片連結')
             }
@@ -112,7 +112,7 @@ export class CheckController {
                 })
                 return
             }
-            const videoData = await this.videoService.getVideoData(checkUrl)
+            const videoData = await this.videoService.getVideoData(url)
 
             // proxy to ai detection services
             const result = await this.checkService.proxyToCheckService({
