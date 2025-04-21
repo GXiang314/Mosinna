@@ -28,7 +28,7 @@ export class CheckController {
     async uploadVideo(req, res) {
         try {
             // proxy to ai detection services
-            const { videoData } = JSON.parse(req.body)
+            const { videoData } = req.body
             if (process.env.SSE_TEST === 'true') {
                 res.writeHead(200, {
                     'Content-Type': 'text/event-stream',
