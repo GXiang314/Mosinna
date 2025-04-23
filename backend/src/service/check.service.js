@@ -25,7 +25,7 @@ export class CheckService {
         res.write(
             `data: ${JSON.stringify({
                 type,
-                data,
+                data: data,
             })} \n\n`,
         )
         console.log(
@@ -75,8 +75,6 @@ export class CheckService {
                         details: `Checked in ${mockResponseTime} seconds`,
                     }
 
-                    console.log(new Date())
-                    console.log(data)
                     const payload = {
                         id: service.id,
                         name: service.name,
@@ -91,6 +89,9 @@ export class CheckService {
                 }
             }),
         )
+        this.sendSSE(res, 'AllCheckFinished', {
+            message: '所有檢測服務已完成',
+        })
 
         // 彙整所有檢測結果並回傳
         return results.filter((x) => x !== null)
