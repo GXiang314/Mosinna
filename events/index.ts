@@ -1,6 +1,7 @@
 export type SSEEventType =
   | "VideoUploaded"
   | "VideoCheckFinished"
+  | "AllCheckFinished"
   | "ValidationError";
 
 export class SSEEvent<T> {
@@ -65,5 +66,15 @@ export interface ValidationError {
 export class ValidationErrorEvent extends SSEEvent<ValidationError> {
   constructor(message: string) {
     super("ValidationError", { message });
+  }
+}
+
+export type AllCheckFinishedData = {
+  message: string;
+}
+
+export class AllCheckFinishedEvent extends SSEEvent<AllCheckFinishedData> {
+  constructor(message: string) {
+    super("AllCheckFinished", { message });
   }
 }
