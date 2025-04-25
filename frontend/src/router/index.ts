@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import Home from '@/views/UserUpload.vue'
+import Test from '@/views/Test.vue'
 import Report from '@/views/UserReport.vue'
 import History from '@/views/UserHistory.vue'
 import Notifi from '@/views/BackNotification.vue'
@@ -11,6 +12,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/',
     name: '上傳影片',
     component: Home
+  },
+  {
+    path: '/Test',
+    name: '結果',
+    component: Test
   },
   {
     path: '/UserReport',

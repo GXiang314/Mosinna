@@ -4,11 +4,17 @@ export type SSEEventType =
   | "AllCheckFinished"
   | "ValidationError";
 
-export class SSEEvent<T> {
-  protected type: SSEEventType;
-  protected data: T;
+export type SSEEventData = 
+  | VideoUploadedData
+  | VideoCheckFinishedData
+  | ValidationError
+  | AllCheckFinishedData;
 
-  constructor(type: SSEEventType, data: T) {
+export class SSEEvent<EventType = SSEEventType, EventData = SSEEventData> {
+  public type: EventType;
+  public data: EventData;
+
+  constructor(type: EventType, data: EventData) {
     this.type = type;
     this.data = data;
   }
@@ -21,7 +27,7 @@ export interface VideoUploadedData {
   }[];
 }
 
-export class VideoUploadedEvent extends SSEEvent<VideoUploadedData> {
+export class VideoUploadedEvent extends SSEEvent<"VideoUploaded", VideoUploadedData> {
   constructor(checkServices: { id: string; name: string }[]) {
     super("VideoUploaded", {
       checkServices: checkServices.map((service) => ({
@@ -43,7 +49,7 @@ export interface VideoCheckFinishedData {
     | string;
 }
 
-export class VideoCheckFinishedEvent extends SSEEvent<VideoCheckFinishedData> {
+export class VideoCheckFinishedEvent extends SSEEvent<"VideoCheckFinished", VideoCheckFinishedData> {
   constructor(
     id: string,
     name: string,
@@ -63,7 +69,7 @@ export interface ValidationError {
   message: string;
 }
 
-export class ValidationErrorEvent extends SSEEvent<ValidationError> {
+export class ValidationErrorEvent extends SSEEvent<"ValidationError", ValidationError> {
   constructor(message: string) {
     super("ValidationError", { message });
   }
@@ -73,7 +79,7 @@ export type AllCheckFinishedData = {
   message: string;
 }
 
-export class AllCheckFinishedEvent extends SSEEvent<AllCheckFinishedData> {
+export class AllCheckFinishedEvent extends SSEEvent<"AllCheckFinished", AllCheckFinishedData> {
   constructor(message: string) {
     super("AllCheckFinished", { message });
   }

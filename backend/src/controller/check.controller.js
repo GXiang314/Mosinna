@@ -110,6 +110,7 @@ export class CheckController {
                 req.on('close', () => {
                     console.log('Client disconnected')
                 })
+                res.end()
                 return
             }
             const videoData = await this.videoService.getVideoData(url)

@@ -1,5 +1,5 @@
 <template>
-  <div class="h-[90vh] flex justify-center items-center">
+  <div class="min-h-[90vh] flex justify-center items-center py-10">
     <div
       class="w-11/12 md:w-4/5 max-w-[900px] bg-[hsla(256,100%,96%,0.9)] rounded-lg shadow-lg"
     >
@@ -13,153 +13,192 @@
 
       <hr class="border-t-2 border-gray-300" />
 
-      <div class="flex flex-col items-center p-3 md:p-5 text-base md:text-xl">
-        <div class="relative w-full h-[150px] md:h-[200px]">
-          <canvas id="myChart"></canvas>
-        </div>
-        <div
-          class="relative w-[200px] h-[150px] md:h-[260px] bg-[#D1C4E9] rounded-lg flex justify-center items-start"
-        >
-          <span class="text-8xl m-4">😊</span>
-          <div
-            class="absolute bottom-0 w-[200px] h-[130px] md:h-[150px] bg-[#9575CD] rounded-lg flex flex-col justify-center items-center p-4"
-          >
-            <div class="text-[#e9e0f3] rounded-lg p-2">音訊偽造</div>
-            <div class="text-[#a6f5d4] rounded-lg p-2">尚未發現風險</div>
-            <div class="text-[#6200EA] rounded-lg p-2">ℹ️</div>
-          </div>
-        </div>
-        <div class="w-full flex flex-col items-center">
-          <div
-            v-for="(gridItem, gridIndex) in gridItems"
-            :key="gridIndex"
-            class="flex flex-row justify-between w-full max-w-[400px] my-2 md:my-2.5 mx-2 md:mx-2.5 gap-2"
-          >
-            <div
-              class="flex-1 p-2 md:p-2.5 text-center rounded bg-[#6b5276] text-[#dad8eb]"
-            >
-              {{ gridItem.title }}
-            </div>
-            <div
-              class="flex-1 p-2 md:p-2.5 text-white text-center rounded"
-              :class="
-                gridItem.value === 'risky' ? 'bg-[#C8698A]' : 'bg-[#5bc259]'
-              "
-            >
-              {{ gridItem.value === 'risky' ? '可疑內容' : '尚未發現風險' }}
-            </div>
-          </div>
+      <!-- 🕐 狀態訊息 -->
+      <div v-if="statusMsg" class="text-center mt-4 text-[#f1ecff] text-sm">
+        {{ statusMsg }}
+      </div>
 
-          <div class="text-center mt-4 sm:mt-6">
+      <!-- ✅ 卡片區：左右排列 -->
+      <div class="flex flex-wrap justify-center gap-4 mt-6">
+        <div
+          v-for="(card, index) in cards"
+          :key="index"
+          class="relative w-[200px] h-[150px] md:h-[260px] bg-[#D1C4E9] rounded-lg shadow-lg flex justify-center items-start"
+        >
+          <span class="text-6xl md:text-8xl m-4">{{ card.icon }}</span>
+
+          <!-- Bottom Card -->
+          <div
+            :class="{
+              'bg-[#4CAF50]': card.status === 'safe',
+              'bg-[#C8698A]': card.status === 'risky',
+            }"
+            class="absolute bottom-0 w-full h-[130px] md:h-[150px] rounded-lg flex flex-col justify-center items-center p-4 space-y-2"
+          >
+            <div class="text-white text-base font-semibold">
+              {{ card.title }}
+            </div>
             <button
-              @click="showPopupshare"
-              class="px-4 sm:px-6 py-1.5 sm:py-2 bg-pink-500 text-white text-sm sm:text-base rounded hover:bg-pink-400 transition-colors"
+              @click="showModal = true"
+              class="flex items-center gap-2 text-white text-sm bg-[#6b5276] px-4 py-1 rounded-full hover:bg-[#513e59] transition"
             >
-              分享
+              <svg
+                v-if="card.status === 'safe'"
+                class="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="M11.25 9.75h.008v.008h-.008V9.75zM12 12v3.75m0 3.75a9 9 0 100-18 9 9 0 000 18z"
+                />
+              </svg>
+              <svg
+                v-if="card.status === 'risky'"
+                class="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="M12 6v6m0 0v6m0-6h6m-6 0h-6"
+                />
+              </svg>
+              {{ card.buttonText }}
             </button>
           </div>
         </div>
       </div>
 
-      <!-- ShareResult Component -->
-      <ShareResult
-        v-if="showModalshare"
-        v-model:detailsText="detailsText"
-        v-model:hashtags="hashtags"
-        @close="closePopupshare"
-        @share-to-threads="shareToThreads"
-      />
+      <!-- 📈 進度條 -->
+      <div v-if="progress > 0" class="mt-4">
+        <div class="bg-gray-200 h-4 rounded overflow-hidden">
+          <div
+            class="bg-blue-500 h-4 transition-all"
+            :style="{ width: progress + '%' }"
+          />
+        </div>
+        <p class="text-sm mt-1">進度：{{ progress }}%</p>
+      </div>
+
+      <!-- 📜 訊息紀錄 -->
+      <div class="mt-4">
+        <h3 class="text-lg font-semibold">事件紀錄：</h3>
+        <ul class="list-disc list-inside text-sm">
+          <li v-for="(msg, idx) in uploadStore.events" :key="idx">
+            {{ msg.type }}
+          </li>
+        </ul>
+      </div>
+
+      <!-- ✅ Modal -->
+      <div
+        v-if="showModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      >
+        <div
+          class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full text-gray-800"
+        >
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-semibold">風險狀態說明</h2>
+            <button
+              @click="showModal = false"
+              class="text-gray-500 hover:text-gray-700"
+            >
+              ✕
+            </button>
+          </div>
+          <p>
+            目前系統未檢測到任何音訊偽造的風險。如有疑慮，請重新上傳或聯絡管理員。
+          </p>
+        </div>
+      </div>
+
+      <!-- ✅ 分享按鈕 -->
+      <div class="text-center mt-4 sm:mt-6">
+        <button
+          @click="shareToThreads"
+          class="px-4 sm:px-6 py-1.5 sm:py-2 bg-pink-500 text-white text-sm sm:text-base rounded hover:bg-pink-400 transition-colors"
+        >
+          分享至 Threads
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import Chart from 'chart.js/auto'
-import ShareResult from '../components/ShareResult.vue'
+<script setup lang="ts">
+import { ref, onMounted, watch } from "vue";
+import { useUploadStore } from "@/stores/useUploadStore";
 
-const gridItems = ref([])
-const router = useRouter()
-const showModalshare = ref(false)
-const detailsText = ref('')
-const hashtags = ref('#魔聲仔')
-const shareId = ref('')
+const uploadStore = useUploadStore();
+console.log(uploadStore.events);
 
-const initializeGridData = () => {
-  const storedData = JSON.parse(localStorage.getItem('apiResponseData'))
-  const checkList = storedData?.checkList
-  gridItems.value = checkList.map((item) => ({
-    title: item.name,
-    value: item.result === 'risky' ? 'risky' : 'pass'
-  }))
+const showModal = ref(false);
+const progress = ref(0);
+const statusMsg = ref("");
+const messages = ref<string[]>([]);
 
-  // 設置分享文字
-  const riskyService = gridItems.value
-    ?.filter((item) => item.value === 'risky')
-    .map((item) => `「${item.title}」`)
-  if (riskyService.length > 0) {
-    detailsText.value = `要小心！我在魔聲仔中的${riskyService.join(
-      '、'
-    )}中檢測到可疑內容，建議大家小心使用。`
-  }
-  shareId.value = storedData.id
-  return true
-}
+const cards = ref([
+  { icon: "😊", title: "人臉偽造", buttonText: "尚未發現風險", status: "safe" },
+  {
+    icon: "🤔",
+    title: "音訊偽造",
+    buttonText: "疑似可疑內容",
+    status: "risky",
+  },
+  { icon: "😊", title: "內容詐騙", buttonText: "尚未發現風險", status: "safe" },
+]);
 
-const createDoughnutChart = () => {
-  const ctx = document.getElementById('myChart').getContext('2d')
-  const results = gridItems.value.reduce(
-    (acc, item) => {
-      acc[item.value]++
-      return acc
-    },
-    { pass: 0, risky: 0 }
-  )
-
-  new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      datasets: [
-        {
-          label: '檢測結果',
-          data: [results.pass, results.risky],
-          backgroundColor: ['#5bc259', '#C8698A'],
-          borderColor: 'rgba(75, 192, 192, 1)',
-          borderWidth: 0.2
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false
-    }
-  })
-}
-
-const showPopupshare = () => {
-  showModalshare.value = true
-}
-
-const closePopupshare = () => {
-  showModalshare.value = false
-}
+onMounted(() => {});
 
 const shareToThreads = () => {
-  const context = detailsText.value
-  const url = `魔聲仔檢測結果：\n${
-    import.meta.env.VITE_FRONTEND_HOST
-  }/UserHistory?id=${shareId.value}`
-  const tag = hashtags.value ? `\n${hashtags.value}` : ''
-  const shareUrl = `https://threads.net/intent/post?text=${encodeURIComponent(
-    `${context}\n\n${url}\n${tag}`
-  )}`
-  window.open(shareUrl, '_blank')
-}
+  const text = encodeURIComponent(
+    "🎧 影片分析結果：尚未發現風險，背景雜訊有些許異常。"
+  );
+  const url = encodeURIComponent(window.location.href);
+  const shareUrl = `https://www.threads.net/intent/post?text=${text}%20${url}`;
+  window.open(shareUrl, "_blank");
+};
 
-onMounted(() => {
-  if (initializeGridData()) {
-    createDoughnutChart()
+const progressLoading = () => {
+  switch (uploadStore.events.findLast((x) => x)?.type) {
+    case "VideoUploaded":
+      messages.value.push("🚀 影片上傳成功，開始檢測中...");
+      progress.value = 30;
+      break;
+    case "VideoCheckFinished":
+      messages.value.push(`✅ 檢測完成：${uploadStore.events[0].data}`);
+      progress.value = 70;
+      break;
+    case "AllCheckFinished":
+      messages.value.push("✅ 所有檢測服務已完成");
+      progress.value = 100;
+      break;
+    case "ValidationError":
+      messages.value.push(`❗ 錯誤：${uploadStore.events[0].data}`);
+      progress.value = 0;
+      break;
   }
-})
+};
+
+watch(
+  uploadStore.events,
+  (newEvents) => {
+    const latestEvent = newEvents[newEvents.length - 1];
+    messages.value.push(latestEvent.type);
+    progressLoading();
+  },
+  { immediate: true }
+);
 </script>
+
+<style scoped>
+/* 你可以加一些動畫或樣式強化 modal 效果 */
+</style>
