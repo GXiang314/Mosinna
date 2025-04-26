@@ -12,7 +12,9 @@
         class="w-full bg-[hsla(282,18%,39%,0.7)] border border-[#f1ecff] border-b-0 rounded-t-[20px] p-8 shadow-[0_-2px_10px_rgba(0,0,0,0.1)]"
       >
         <!-- 🔗 URL 輸入區 -->
-        <p class="text-2xl font-bold m-0 py-4 px-4 text-left text-[#f1ecff]">輸入連結</p>
+        <p class="text-2xl font-bold m-0 py-4 px-4 text-left text-[#f1ecff]">
+          輸入連結
+        </p>
         <div class="flex flex-col sm:flex-row gap-4">
           <input
             v-model="urlInput"
@@ -26,7 +28,9 @@
         </div>
 
         <!-- 📁 檔案上傳區 -->
-        <p class="text-2xl font-bold m-0 py-4 px-4 text-left text-[#f1ecff]">上傳影片</p>
+        <p class="text-2xl font-bold m-0 py-4 px-4 text-left text-[#f1ecff]">
+          上傳影片
+        </p>
         <div
           @click="triggerFileUpload"
           class="border-2 border-dashed border-[#f1ecff] px-4 py-12 text-center rounded-[10px] bg-transparent cursor-pointer"
@@ -50,7 +54,9 @@
             @change="handleFileChange"
             accept="video/*"
           />
-          <button class="btn mt-4" @click.stop="triggerFileUpload">點擊上傳</button>
+          <button class="btn mt-4" @click.stop="triggerFileUpload">
+            點擊上傳
+          </button>
         </div>
 
         <!-- 🕐 狀態訊息 -->
@@ -61,28 +67,12 @@
         <!-- 📈 進度條 -->
         <div v-if="progress > 0" class="mt-4">
           <div class="bg-gray-200 h-4 rounded overflow-hidden">
-            <div class="bg-blue-500 h-4 transition-all" :style="{ width: progress + '%' }" />
+            <div
+              class="bg-blue-500 h-4 transition-all"
+              :style="{ width: progress + '%' }"
+            />
           </div>
           <p class="text-sm mt-1">進度：{{ progress }}%</p>
-        </div>
-
-        <!-- 🔴 中斷按鈕 -->
-        <div class="mt-4 space-x-2">
-          <button
-            v-if="sseRunning"
-            class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-            
-          >
-            🔴 取消檢查
-          </button>
-        </div>
-
-        <!-- 📜 訊息紀錄 -->
-        <div class="mt-4">
-          <h3 class="text-lg font-semibold">事件紀錄：</h3>
-          <ul class="list-disc list-inside text-sm">
-            <li v-for="(msg, idx) in messages" :key="idx">{{ msg }}</li>
-          </ul>
         </div>
       </div>
     </div>
@@ -90,64 +80,67 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import { useUploadStore } from '@/stores/useUploadStore'
+import { ref, watch } from "vue";
+import { useUploadStore } from "@/stores/useUploadStore";
+import { useRouter } from "vue-router"; // ✨新增這行
 
-const uploadStore = useUploadStore()
+const router = useRouter(); // ✨新增這行
+const uploadStore = useUploadStore();
 
-const file = ref<File>()
-const messages = ref([])
-const sseRunning = ref(false)
-const progress = ref(0)
-const urlInput = ref('')
-const statusMsg = ref('')
-const fileInput = ref<HTMLInputElement>()
+const file = ref<File>();
+const messages = ref([]);
+const sseRunning = ref(false);
+const progress = ref(0);
+const urlInput = ref("");
+const statusMsg = ref("");
+const fileInput = ref<HTMLInputElement>();
 
 const triggerFileUpload = () => {
-  fileInput.value?.click()
-}
+  fileInput.value?.click();
+};
 
 const handleFileChange = (event: Event) => {
-  const selectedFile = (event.target as HTMLInputElement).files?.[0]
-  if (!selectedFile || !selectedFile.type.startsWith('video/')) return
+  const selectedFile = (event.target as HTMLInputElement).files?.[0];
+  if (!selectedFile || !selectedFile.type.startsWith("video/")) return;
 
-  file.value = selectedFile
-  const reader = new FileReader()
+  file.value = selectedFile;
+  const reader = new FileReader();
 
   reader.onload = async (e) => {
     const result = (e.target as FileReader).result;
-    if (typeof result === 'string') {
+    if (typeof result === "string") {
       uploadStore.uploadVideo(result);
     } else {
-      console.error('FileReader result is not a string');
+      console.error("FileReader result is not a string");
     }
-  }
+  };
 
-  reader.readAsDataURL(selectedFile)
-}
+  reader.readAsDataURL(selectedFile);
+};
 
 const submitUrl = () => {
-  if (!urlInput.value || !urlInput.value.startsWith('http')) {
-    statusMsg.value = '⚠️ 請輸入正確的影片網址'
-    return
+  if (!urlInput.value || !urlInput.value.startsWith("http")) {
+    statusMsg.value = "⚠️ 請輸入正確的影片網址";
+    return;
   }
-  uploadStore.uploadUrl(urlInput.value)
-}
-console.log('uploadStore', uploadStore.events)
+  uploadStore.uploadUrl(urlInput.value);
+};
 
-watch(uploadStore.events, (events) =>{
-  events.findLast(event => {
-    console.log('event', event.type, event.data)
-  })
-  
-})
-
+watch(
+  () => uploadStore.events,
+  (newEvents) => {
+    if (newEvents.find((x) => x.type === "VideoUploaded")) {
+      alert("上傳完成！即將進入分析頁面");
+      router.push("/UserReport");
+    }
+  },
+  { deep: true }
+);
 </script>
-
 
 <style scoped>
 .btn {
-  background-color: #C8698A;
+  background-color: #c8698a;
   color: #fff;
   padding: 0.5rem 1.5rem;
   border-radius: 10px;

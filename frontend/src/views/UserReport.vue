@@ -1,24 +1,31 @@
 <template>
   <div class="min-h-[90vh] flex justify-center items-center py-10">
-    <div
-      class="w-11/12 md:w-4/5 max-w-[900px] bg-[hsla(256,100%,96%,0.9)] rounded-lg shadow-lg"
-    >
+    <div class="w-11/12 md:w-4/5 max-w-[900px] bg-[hsla(256,100%,96%,0.9)] rounded-lg shadow-lg">
       <div class="bg-[#6b5276] rounded-t-lg">
-        <p
-          class="m-0 py-3 md:py-4 px-4 md:px-6 text-left text-[#f1ecff] text-xl md:text-2xl"
-        >
+        <p class="m-0 py-3 md:py-4 px-4 md:px-6 text-left text-[#f1ecff] text-xl md:text-2xl">
           結果分析
         </p>
       </div>
 
       <hr class="border-t-2 border-gray-300" />
 
+      <!-- 📈 進度條 -->
+      <div v-if="progress > 0" class="mt-4 flex items-center justify-center gap-4">
+        <p class="text-xl text-[#594462]">進度：{{ progress }}%</p>
+        <div class="bg-[#e0d7ec] h-5 w-80 rounded overflow-hidden shadow-inner">
+          <div
+            class="bg-[#9e7cad] h-5 transition-all rounded"
+            :style="{ width: progress + '%' }"
+          />
+        </div>
+      </div>
+
       <!-- 🕐 狀態訊息 -->
-      <div v-if="statusMsg" class="text-center mt-4 text-[#f1ecff] text-sm">
+      <div v-if="statusMsg" class="text-center mt-4 text-[#2b212f] text-sm">
         {{ statusMsg }}
       </div>
 
-      <!-- ✅ 卡片區：左右排列 -->
+      <!-- ✅ 卡片區 -->
       <div class="flex flex-wrap justify-center gap-4 mt-6">
         <div
           v-for="(card, index) in cards"
@@ -27,7 +34,6 @@
         >
           <span class="text-6xl md:text-8xl m-4">{{ card.icon }}</span>
 
-          <!-- Bottom Card -->
           <div
             :class="{
               'bg-[#4CAF50]': card.status === 'safe',
@@ -42,75 +48,24 @@
               @click="showModal = true"
               class="flex items-center gap-2 text-white text-sm bg-[#6b5276] px-4 py-1 rounded-full hover:bg-[#513e59] transition"
             >
-              <svg
-                v-if="card.status === 'safe'"
-                class="w-5 h-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="1.5"
-                  d="M11.25 9.75h.008v.008h-.008V9.75zM12 12v3.75m0 3.75a9 9 0 100-18 9 9 0 000 18z"
-                />
+              <svg v-if="card.status === 'safe'" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11.25 9.75h.008v.008h-.008V9.75zM12 12v3.75m0 3.75a9 9 0 100-18 9 9 0 000 18z" />
               </svg>
-              <svg
-                v-if="card.status === 'risky'"
-                class="w-5 h-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="1.5"
-                  d="M12 6v6m0 0v6m0-6h6m-6 0h-6"
-                />
+              <svg v-if="card.status === 'risky'" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0h-6" />
               </svg>
               {{ card.buttonText }}
             </button>
           </div>
         </div>
       </div>
-
-      <!-- 📈 進度條 -->
-      <div v-if="progress > 0" class="mt-4">
-        <div class="bg-gray-200 h-4 rounded overflow-hidden">
-          <div
-            class="bg-blue-500 h-4 transition-all"
-            :style="{ width: progress + '%' }"
-          />
-        </div>
-        <p class="text-sm mt-1">進度：{{ progress }}%</p>
-      </div>
-
-      <!-- 📜 訊息紀錄 -->
-      <div class="mt-4">
-        <h3 class="text-lg font-semibold">事件紀錄：</h3>
-        <ul class="list-disc list-inside text-sm">
-          <li v-for="(msg, idx) in uploadStore.events" :key="idx">
-            {{ msg.type }}
-          </li>
-        </ul>
-      </div>
-
+      
       <!-- ✅ Modal -->
-      <div
-        v-if="showModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      >
-        <div
-          class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full text-gray-800"
-        >
+      <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full text-gray-800">
           <div class="flex justify-between items-center mb-4">
             <h2 class="text-lg font-semibold">風險狀態說明</h2>
-            <button
-              @click="showModal = false"
-              class="text-gray-500 hover:text-gray-700"
-            >
+            <button @click="showModal = false" class="text-gray-500 hover:text-gray-700">
               ✕
             </button>
           </div>
@@ -134,71 +89,62 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import { useUploadStore } from "@/stores/useUploadStore";
 
 const uploadStore = useUploadStore();
-console.log(uploadStore.events);
 
 const showModal = ref(false);
 const progress = ref(0);
 const statusMsg = ref("");
-const messages = ref<string[]>([]);
-
-const cards = ref([
-  { icon: "😊", title: "人臉偽造", buttonText: "尚未發現風險", status: "safe" },
-  {
-    icon: "🤔",
-    title: "音訊偽造",
-    buttonText: "疑似可疑內容",
-    status: "risky",
-  },
-  { icon: "😊", title: "內容詐騙", buttonText: "尚未發現風險", status: "safe" },
-]);
-
-onMounted(() => {});
 
 const shareToThreads = () => {
-  const text = encodeURIComponent(
-    "🎧 影片分析結果：尚未發現風險，背景雜訊有些許異常。"
-  );
+  const text = encodeURIComponent("🎧 影片分析結果：尚未發現風險，背景雜訊有些許異常。");
   const url = encodeURIComponent(window.location.href);
   const shareUrl = `https://www.threads.net/intent/post?text=${text}%20${url}`;
   window.open(shareUrl, "_blank");
 };
 
-const progressLoading = () => {
-  switch (uploadStore.events.findLast((x) => x)?.type) {
-    case "VideoUploaded":
-      messages.value.push("🚀 影片上傳成功，開始檢測中...");
-      progress.value = 30;
-      break;
-    case "VideoCheckFinished":
-      messages.value.push(`✅ 檢測完成：${uploadStore.events[0].data}`);
-      progress.value = 70;
-      break;
-    case "AllCheckFinished":
-      messages.value.push("✅ 所有檢測服務已完成");
-      progress.value = 100;
-      break;
-    case "ValidationError":
-      messages.value.push(`❗ 錯誤：${uploadStore.events[0].data}`);
-      progress.value = 0;
-      break;
-  }
-};
+// 🔥 核心重點：從 uploadStore.events 自動生成 cards
+const cards = computed(() => {
+  return uploadStore.events
+    .filter((e) => e.type === "VideoCheckFinished")
+    .map((e) => {
+      const result = e.data.result;
+      const name = e.data.name;
+      if (result === "risky") {
+        return {
+          icon: "🤔",
+          title: name,
+          buttonText: "疑似可疑內容",
+          status: "risky",
+        };
+      } else {
+        return {
+          icon: "😊",
+          title: name,
+          buttonText: "尚未發現風險",
+          status: "safe",
+        };
+      }
+    });
+});
 
+// 🕐 進度條邏輯（可以加強）
 watch(
-  uploadStore.events,
+  () => uploadStore.events,
   (newEvents) => {
-    const latestEvent = newEvents[newEvents.length - 1];
-    messages.value.push(latestEvent.type);
-    progressLoading();
+    if (newEvents.find((x) => x.type === "AllCheckFinished")) {
+      progress.value = 100;
+      statusMsg.value = "檢測完成";
+    } else if (newEvents.some((x) => x.type === "VideoCheckFinished")) {
+      progress.value = 70;
+      statusMsg.value = "部分檢測完成";
+    } else if (newEvents.find((x) => x.type === "VideoUploaded")) {
+      progress.value = 30;
+      statusMsg.value = "🚀 上傳成功，檢測中...";
+    }
   },
-  { immediate: true }
+  { deep: true }
 );
 </script>
-
-<style scoped>
-/* 你可以加一些動畫或樣式強化 modal 效果 */
-</style>

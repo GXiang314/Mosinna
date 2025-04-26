@@ -32,7 +32,7 @@ export const useUploadStore = defineStore("upload", () => {
           }
         } catch (e) {}
       },
-      onerror(err) {
+      onerror() {
         controller.abort(); // 終止 SSE 連接
       },
     });
