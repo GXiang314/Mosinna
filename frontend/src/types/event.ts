@@ -4,13 +4,22 @@ export type SSEEventType =
   | "AllCheckFinished"
   | "ValidationError";
 
-export type SSEEventData = 
-  | VideoUploadedData
-  | VideoCheckFinishedData
-  | ValidationError
-  | AllCheckFinishedData;
+export type SSEEventDataMap = {
+  [key in SSEEventType]: key extends "VideoUploaded"
+    ? VideoUploadedData
+    : key extends "VideoCheckFinished"
+    ? VideoCheckFinishedData
+    : key extends "ValidationError"
+    ? ValidationError
+    : key extends "AllCheckFinished"
+    ? AllCheckFinishedData
+    : never;
+};
 
-export class SSEEvent<EventType = SSEEventType, EventData = SSEEventData> {
+export class SSEEvent<
+  EventType extends SSEEventType,
+  EventData = SSEEventDataMap[EventType]
+> {
   public type: EventType;
   public data: EventData;
 
@@ -27,7 +36,10 @@ export interface VideoUploadedData {
   }[];
 }
 
-export class VideoUploadedEvent extends SSEEvent<"VideoUploaded", VideoUploadedData> {
+export class VideoUploadedEvent extends SSEEvent<
+  "VideoUploaded",
+  VideoUploadedData
+> {
   constructor(checkServices: { id: string; name: string }[]) {
     super("VideoUploaded", {
       checkServices: checkServices.map((service) => ({
@@ -49,7 +61,10 @@ export interface VideoCheckFinishedData {
     | string;
 }
 
-export class VideoCheckFinishedEvent extends SSEEvent<"VideoCheckFinished", VideoCheckFinishedData> {
+export class VideoCheckFinishedEvent extends SSEEvent<
+  "VideoCheckFinished",
+  VideoCheckFinishedData
+> {
   constructor(
     id: string,
     name: string,
@@ -69,7 +84,10 @@ export interface ValidationError {
   message: string;
 }
 
-export class ValidationErrorEvent extends SSEEvent<"ValidationError", ValidationError> {
+export class ValidationErrorEvent extends SSEEvent<
+  "ValidationError",
+  ValidationError
+> {
   constructor(message: string) {
     super("ValidationError", { message });
   }
@@ -77,9 +95,12 @@ export class ValidationErrorEvent extends SSEEvent<"ValidationError", Validation
 
 export type AllCheckFinishedData = {
   message: string;
-}
+};
 
-export class AllCheckFinishedEvent extends SSEEvent<"AllCheckFinished", AllCheckFinishedData> {
+export class AllCheckFinishedEvent extends SSEEvent<
+  "AllCheckFinished",
+  AllCheckFinishedData
+> {
   constructor(message: string) {
     super("AllCheckFinished", { message });
   }

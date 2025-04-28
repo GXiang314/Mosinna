@@ -5,7 +5,12 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 
 export const useUploadStore = defineStore("upload", () => {
-  const events = ref<SSEEvent[]>([]); // 用來存儲上傳的事件
+  const events = ref<
+    | SSEEvent<"ValidationError">[]
+    | SSEEvent<"AllCheckFinished">[]
+    | SSEEvent<"VideoCheckFinished">[]
+    | SSEEvent<"VideoUploaded">[]
+  >([]); // 用來存儲上傳的事件
 
   const uploadUrl = async (url: string) => {
     const controller = new AbortController();
@@ -45,7 +50,7 @@ export const useUploadStore = defineStore("upload", () => {
       videoData,
     };
     events.value = []; // 清空事件列表
-    await fetchEventSource(apiEndpoint, { 
+    await fetchEventSource(apiEndpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
