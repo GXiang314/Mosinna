@@ -37,7 +37,7 @@
         <div
           v-for="(card, index) in cards"
           :key="index"
-          class="relative w-[240px] h-[200px] md:h-[260px] bg-[#D1C4E9] rounded-lg shadow-lg flex flex-col justify-start items-center"
+          class="relative w-[260px] h-[200px] md:h-[260px] bg-[#D1C4E9] rounded-lg shadow-lg flex flex-col justify-start items-center"
         >
           <div class="pt-4 pb-2 flex-none">
             <span class="text-6xl md:text-8xl">{{ card.icon }}</span>
