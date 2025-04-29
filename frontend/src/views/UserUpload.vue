@@ -13,13 +13,13 @@
       >
         <!-- 🔗 URL 輸入區 -->
         <p class="text-2xl font-bold m-0 py-4 px-4 text-left text-[#f1ecff]">
-          輸入連結
+          輸入影片連結
         </p>
         <div class="flex flex-col sm:flex-row gap-4">
           <input
             v-model="urlInput"
             type="url"
-            placeholder="請輸入影片連結"
+            placeholder="請輸入影片連結(僅支援 Youtube)"
             class="flex-1 rounded-[10px] border-none bg-[rgba(255,255,255,0.729)] p-3 text-base outline-none shadow-[0_-2px_10px_rgba(0,0,0,0.1)]"
           />
           <button class="btn w-full sm:w-auto" @click="submitUrl">
