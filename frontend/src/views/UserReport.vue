@@ -30,16 +30,18 @@
         <div
           v-for="(card, index) in cards"
           :key="index"
-          class="relative w-[200px] h-[150px] md:h-[260px] bg-[#D1C4E9] rounded-lg shadow-lg flex justify-center items-start"
+          class="relative w-[240px] h-[200px] md:h-[260px] bg-[#D1C4E9] rounded-lg shadow-lg flex flex-col justify-start items-center"
         >
-          <span class="text-6xl md:text-8xl m-4">{{ card.icon }}</span>
+          <div class="pt-4 pb-2 flex-none">
+            <span class="text-6xl md:text-8xl">{{ card.icon }}</span>
+          </div>
 
           <div
             :class="{
               'bg-[#4CAF50]': card.status === 'safe',
               'bg-[#C8698A]': card.status === 'risky',
             }"
-            class="absolute bottom-0 w-full h-[130px] md:h-[150px] rounded-lg flex flex-col justify-center items-center p-4 space-y-2"
+            class="absolute bottom-0 w-full h-[110px] md:h-[140px] rounded-lg flex flex-col justify-center items-center p-4 space-y-2"
           >
             <div class="text-white text-base font-semibold">
               {{ card.title }}
