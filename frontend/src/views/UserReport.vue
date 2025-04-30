@@ -289,16 +289,7 @@ watch(
       progress.value = 100;
       statusMsg.value = "檢測完成";
     } else if (newEvents.some((x) => x.type === "VideoCheckFinished")) {
-      const finishedCount = newEvents.filter(
-        (e) => e.type === "VideoCheckFinished"
-      ).length;
-      // Assuming total checks = number of cards generated initially or a fixed number if known
-      // This part needs refinement based on how total checks are determined
-      const totalChecks = cards.value.length || 1; // Avoid division by zero, needs better logic
-      progress.value = Math.min(
-        90,
-        30 + Math.floor((finishedCount / totalChecks) * 60)
-      ); // Example progress update
+      progress.value = 70;
       statusMsg.value = "部分檢測完成";
     } else if (newEvents.find((x) => x.type === "VideoUploaded")) {
       progress.value = 30;
