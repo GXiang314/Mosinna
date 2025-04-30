@@ -47,6 +47,8 @@
             :class="{
               'bg-[#4CAF50]': card.status === 'safe',
               'bg-[#C8698A]': card.status === 'risky',
+              'bg-[#e50b57]': card.status === 'error',
+              'bg-[#9d918e]': card.status === 'unknown',
             }"
             class="absolute bottom-0 w-full h-[110px] md:h-[140px] rounded-lg flex flex-col justify-center items-center p-4 space-y-2"
           >
@@ -54,7 +56,7 @@
               {{ card.title }}
             </div>
             <button
-              @click="showModal = true"
+              @click="handleCardButtonClick(card)"
               class="flex items-center gap-2 text-white text-sm bg-[#6b5276] px-4 py-1 rounded-full hover:bg-[#513e59] transition"
             >
               <svg
@@ -85,6 +87,34 @@
                   d="M12 6v6m0 0v6m0-6h6m-6 0h-6"
                 />
               </svg>
+              <svg
+                v-if="card.status === 'error'"
+                class="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.008v.008H12v-.008z"
+                />
+              </svg>
+              <svg
+                v-if="card.status === 'unknown'"
+                class="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"
+                />
+              </svg>
               {{ card.buttonText }}
             </button>
           </div>
@@ -109,7 +139,7 @@
             </button>
           </div>
           <p>
-            目前系統未檢測到任何音訊偽造的風險。如有疑慮，請重新上傳或聯絡管理員。
+            {{ modalContent }}
           </p>
         </div>
       </div>
@@ -132,21 +162,57 @@ import { ref, computed, watch } from "vue";
 import { useUploadStore } from "@/stores/useUploadStore";
 import { VideoCheckFinishedData } from "@/types/event";
 
+interface Card {
+  icon: string;
+  title: string;
+  buttonText: string;
+  status: "safe" | "risky" | "error" | "unknown";
+  details?: string | object | null; // Add details to the interface
+}
+
 const uploadStore = useUploadStore();
 
 const showModal = ref(false);
-const progress = ref(uploadStore.events.find(e => e.type === "AllCheckFinished") ? -1 : 0);
+const modalContent = ref(""); // Ref to store modal content
+const progress = ref(
+  uploadStore.events.find((e) => e.type === "AllCheckFinished") ? -1 : 0
+);
 const statusMsg = ref("");
+
+const handleCardButtonClick = (card: Card) => {
+  switch (card.status) {
+    case "safe":
+      modalContent.value =
+        "目前系統尚未檢測到該影片任何影、音訊偽造詐騙的風險。如有疑慮，請重新上傳或聯絡管理員。";
+      break;
+    case "risky":
+      modalContent.value = `系統在「${card.title}」檢測中發現疑似可疑內容。建議您謹慎處理此影片，或聯絡管理員以獲取更多資訊。`;
+      break;
+    case "error":
+      modalContent.value = `「${card.title}」檢測過程中發生錯誤。${
+        card.details ? "詳細資訊：" + card.details : "請稍後再試或聯絡管理員。"
+      }`;
+      break;
+    case "unknown":
+      modalContent.value = `「${card.title}」的檢測狀態未知。請聯絡管理員以獲取協助。`;
+      break;
+    default:
+      modalContent.value = "發生未知錯誤，請聯絡管理員。";
+  }
+  showModal.value = true;
+};
 
 const shareToThreads = () => {
   const riskyResults = uploadStore.events.filter(
     (e) => e.type === "VideoCheckFinished" && e.data.result === "risky"
   );
-  
+
   const checkResultId = uploadStore.events.find(
     (e) => e.type === "CheckResultSaved"
   )?.data.checkResultId;
-  const url = `${import.meta.env.VITE_FRONTEND_HOST}/UserHistory?id=${checkResultId}`;
+  const url = `${
+    import.meta.env.VITE_FRONTEND_HOST
+  }/UserHistory?id=${checkResultId}`;
 
   const text = encodeURIComponent(
     `要小心！我在這裡上傳的影片經過系統檢測，結果如下：\n` +
@@ -169,12 +235,13 @@ const shareToThreads = () => {
 };
 
 // 🔥 核心重點：從 uploadStore.events 自動生成 cards
-const cards = computed(() => {
+const cards = computed<Card[]>(() => {
   return uploadStore.events
     .filter((e) => e.type === "VideoCheckFinished")
     .map((e) => {
-      const result = e.data.result;
-      const name = e.data.name;
+      const data = e.data as VideoCheckFinishedData; // Type assertion for clarity
+      const result = data.result;
+      const name = data.name;
       if (result === "risky") {
         return {
           icon: "🤔",
@@ -182,12 +249,33 @@ const cards = computed(() => {
           buttonText: "疑似可疑內容",
           status: "risky",
         };
-      } else {
+      } else if (result === "pass") {
         return {
           icon: "😊",
           title: name,
           buttonText: "尚未發現風險",
           status: "safe",
+        };
+      } else if (result === "error") {
+        const detailsString =
+          typeof data.details === "object" &&
+          data.details !== null &&
+          "message" in data.details
+            ? String(data.details.message)
+            : String(data.details);
+        return {
+          icon: "🥺",
+          title: name,
+          buttonText: "查看錯誤",
+          details: detailsString || "未提供詳細錯誤資訊",
+          status: "error",
+        };
+      } else {
+        return {
+          icon: "❓",
+          title: name,
+          buttonText: "查看狀態",
+          status: "unknown",
         };
       }
     });
@@ -201,13 +289,22 @@ watch(
       progress.value = 100;
       statusMsg.value = "檢測完成";
     } else if (newEvents.some((x) => x.type === "VideoCheckFinished")) {
-      progress.value = 70;
+      const finishedCount = newEvents.filter(
+        (e) => e.type === "VideoCheckFinished"
+      ).length;
+      // Assuming total checks = number of cards generated initially or a fixed number if known
+      // This part needs refinement based on how total checks are determined
+      const totalChecks = cards.value.length || 1; // Avoid division by zero, needs better logic
+      progress.value = Math.min(
+        90,
+        30 + Math.floor((finishedCount / totalChecks) * 60)
+      ); // Example progress update
       statusMsg.value = "部分檢測完成";
     } else if (newEvents.find((x) => x.type === "VideoUploaded")) {
       progress.value = 30;
       statusMsg.value = "🚀 上傳成功，檢測中...";
     }
   },
-  { deep: true }
+  { deep: true, immediate: true } // Add immediate to run on initial load
 );
 </script>
