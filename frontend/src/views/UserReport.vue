@@ -356,7 +356,6 @@ async function renderCheckResultFromAPI() {
           },
         } as SSEEvent<"VideoCheckFinished">);
       });
-      setShareInfo();
     })
     .catch(() => {
       toast.error("無法獲取檢測結果，請稍後再試。");
