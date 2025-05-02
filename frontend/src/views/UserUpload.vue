@@ -17,6 +17,14 @@
         </p>
         <div class="flex flex-col sm:flex-row gap-4">
           <input
+            @keypress="
+              (event) => {
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                  submitUrl();
+                }
+              }
+            "
             v-model="urlInput"
             type="url"
             placeholder="請輸入影片連結(僅支援 Youtube)"
